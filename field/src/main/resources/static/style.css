@@ -1,1 +1,17 @@
+.std-body{
+     align-items: center;
+     background-color: #dedede;
+     display: flex;
+     justify-content: center;
+}
 
+.content-pane{
+    max-width: 500px;
+    padding-left: 100px;
+    padding-right: 100px;
+    padding-bottom: 50px;
+    background-color: #FFFFFF;
+
+    border: 1px solid;
+    box-shadow: 1px 2px;
+}
