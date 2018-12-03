@@ -1,4 +1,5 @@
 rootProject.name = 'sumobots'
 include 'field'
 include 'driverstation'
+include 'library'
 
