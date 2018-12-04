@@ -1,3 +1,4 @@
+import org.inspirerobotics.sumobots.packet.Packet;
 import org.inspirerobotics.sumobots.socket.SocketPipe;
 
 import java.io.IOException;
@@ -11,8 +12,12 @@ public class Driverstation {
         SocketPipe pipe = new SocketPipe(socket);
 
         while(!pipe.isClosed()){
-            pipe.update();
+            pipe.update().ifPresent(Driverstation::handlePacket);
         }
+    }
+
+    private static void handlePacket(Packet packet) {
+        System.out.println(packet);
     }
 
 }
