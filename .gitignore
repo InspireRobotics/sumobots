@@ -1,13 +1,33 @@
-# Eclipse
-sumobots/.classpath
-sumobots/.project
-sumobots/.settings/
-
 # Intellij
 */idea
 .idea
 */out
 out
+
+#eclipse
+.classpath
+.project
+.metadata
+**/bin/
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.settings/
+.loadpath
+.externalToolBuilders/
+*.launch
+
+#gradle
+.gradle
+build
+
+field/build
+library/build
+robot/build
+driverstation/build
 
 # VS Code
 .vscode

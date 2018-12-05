@@ -52,7 +52,6 @@ public class Field {
             PingData pingData = new PingData();
             Packet packet = Packet.create("ping", path, Optional.of(pingData));
             pipe.sendPacket(packet);
-            System.out.println("lag: " + (System.currentTimeMillis() - pingData.getStartTime()));
         }
         pipe.close();
     }
