@@ -1,4 +1,5 @@
 import org.inspirerobotics.sumobots.packet.Packet;
+import org.inspirerobotics.sumobots.packet.PingData;
 import org.inspirerobotics.sumobots.socket.SocketPipe;
 
 import java.io.IOException;
@@ -11,13 +12,17 @@ public class Driverstation {
         SocketChannel socket = SocketChannel.open(new InetSocketAddress(8080));
         SocketPipe pipe = new SocketPipe(socket);
 
-        while(!pipe.isClosed()){
+        while (!pipe.isClosed()) {
             pipe.update().ifPresent(Driverstation::handlePacket);
         }
     }
 
     private static void handlePacket(Packet packet) {
-        System.out.println(packet);
+        if (packet.getAction().equals("ping")) {
+            PingData data = (PingData) packet.getDataAs(PingData.class).get();
+            System.out.println(data);
+            System.out.println("Ping: " + (System.currentTimeMillis() - data.getStartTime()));
+        }
     }
 
 }

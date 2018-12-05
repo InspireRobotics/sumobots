@@ -1,12 +1,12 @@
 package org.inspirerobotics.sumobots;
 
-public enum ControlSystemComponent {
+public enum FmsComponent {
 
     FIELD_SERVER("field_server"), DRIVER_STATION("driver_station");
 
     private final String sourceName;
 
-    ControlSystemComponent(String name) {
+    FmsComponent(String name) {
         this.sourceName = name;
     }
 

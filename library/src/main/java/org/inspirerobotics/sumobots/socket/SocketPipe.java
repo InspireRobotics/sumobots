@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.Optional;
 
 public class SocketPipe implements Closeable {
@@ -87,7 +86,8 @@ public class SocketPipe implements Closeable {
         String characters  = packet.toJSON();
         ByteBuffer buffer = createBufferFromBytes(toUTF8Bytes(characters));
         buffer.flip();
-        System.out.println("Sending packet: " + Arrays.toString(buffer.array()));
+
+        System.out.println("Sending packet: " + characters);
         try{
             socket.write(buffer);
         }catch (IOException e){

@@ -1,13 +1,16 @@
 package org.inspirerobotics.sumobots.field;
 
-import org.inspirerobotics.sumobots.ControlSystemComponent;
+import org.inspirerobotics.sumobots.FmsComponent;
 import org.inspirerobotics.sumobots.field.server.DriverstationServer;
 import org.inspirerobotics.sumobots.field.web.WebServer;
 import org.inspirerobotics.sumobots.packet.Packet;
+import org.inspirerobotics.sumobots.packet.PacketPath;
+import org.inspirerobotics.sumobots.packet.PingData;
 import org.inspirerobotics.sumobots.socket.SocketPipe;
 
 import java.io.IOException;
 import java.nio.channels.SocketChannel;
+import java.util.Optional;
 
 public class Field {
 
@@ -43,15 +46,13 @@ public class Field {
 
     private void newDriverstationConnection(SocketChannel socketChannel) {
         SocketPipe pipe = new SocketPipe(socketChannel);
+        PacketPath path = new PacketPath(FmsComponent.FIELD_SERVER, FmsComponent.DRIVER_STATION);
 
-        for(int i = 0; i < 500; i++){
-            Packet packet = Packet.create(
-                    "hello " + i,
-                    ControlSystemComponent.FIELD_SERVER,
-                    ControlSystemComponent.DRIVER_STATION
-            );
-
+        for (int i = 0; i < 500; i++) {
+            PingData pingData = new PingData();
+            Packet packet = Packet.create("ping", path, Optional.of(pingData));
             pipe.sendPacket(packet);
+            System.out.println("lag: " + (System.currentTimeMillis() - pingData.getStartTime()));
         }
         pipe.close();
     }
