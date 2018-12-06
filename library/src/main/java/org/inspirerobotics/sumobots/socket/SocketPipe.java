@@ -1,12 +1,16 @@
 package org.inspirerobotics.sumobots.socket;
 
+import org.inspirerobotics.sumobots.packet.HeartbeatData;
 import org.inspirerobotics.sumobots.packet.Packet;
+import org.inspirerobotics.sumobots.packet.PacketFactory;
+import org.inspirerobotics.sumobots.packet.PacketPath;
 
 import java.io.Closeable;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 import java.util.Optional;
 
 public class SocketPipe implements Closeable {
@@ -14,11 +18,24 @@ public class SocketPipe implements Closeable {
     private static final int HEADER_SIZE = 4;
 
     private final SocketChannel socket;
+    private final SocketPipeListener listener;
+    private final PacketPath path;
+
+    private long lastHeartbeatSentTime;
+    private long lastHeartbeatReceivedTime;
+    private int ping;
 
     private boolean closed = false;
 
-    public SocketPipe(SocketChannel socket) {
+    public SocketPipe(SocketChannel socket, SocketPipeListener listener, PacketPath path) {
+        Objects.requireNonNull(socket, "Socket cannot be null");
+        Objects.requireNonNull(listener, "Listener cannot be null");
+        Objects.requireNonNull(path, "Path cannot be null");
+
+
         this.socket = socket;
+        this.listener = listener;
+        this.path = path;
 
         try{
             socket.configureBlocking(false);
@@ -30,19 +47,64 @@ public class SocketPipe implements Closeable {
 
     }
 
-    public Optional<Packet> update(){
+    public void update(){
         if(closed)
             throw new IllegalStateException("Cannot update while closed!");
 
+        listener.update();
+        updateHeartbeat();
+
         try{
-            return readFromSocket();
+            readFromSocket().ifPresent(this::handlePacketReceived);
         }catch (IOException e){
             System.err.println("Failed while reading from socket pipe: " + e);
             System.err.println("Closing socket pipe due to error!");
             close();
         }
 
-        return Optional.empty();
+    }
+
+    private void handlePacketReceived(Packet packet) {
+        if(packet.getAction().equals(PacketFactory.HEARTBEAT)){
+            handleHeartbeatPacket(packet);
+        }else {
+            listener.onPacketReceived(packet);
+        }
+    }
+
+    private void updateHeartbeat() {
+        if(lastHeartbeatSentTime + 1000 < System.currentTimeMillis()){
+            sendHeartbeat();
+        }
+
+        if(lastHeartbeatReceivedTime == 0){
+            lastHeartbeatReceivedTime = System.currentTimeMillis();
+        }
+
+        if(lastHeartbeatReceivedTime + 5000 < System.currentTimeMillis()){
+            System.out.println("Lost signal with connection!");
+            close();
+            return;
+        }
+    }
+
+    private void sendHeartbeat() {
+        lastHeartbeatSentTime = System.currentTimeMillis();
+        sendPacket(PacketFactory.createHeartbeat(path));
+    }
+
+    private void handleHeartbeatPacket(Packet packet) {
+        lastHeartbeatReceivedTime = System.currentTimeMillis();
+        HeartbeatData data = (HeartbeatData) packet.getDataAs(HeartbeatData.class).get();
+        ping = (int) (lastHeartbeatReceivedTime - data.getSentTime());
+
+        System.out.println("ping: " + ping + "ms");
+        checkPing();
+    }
+
+    private void checkPing() {
+        if(ping > 25)
+            System.out.println("High ping: " + ping + "ms");
     }
 
     private Optional<Packet> readFromSocket() throws IOException {
@@ -113,11 +175,16 @@ public class SocketPipe implements Closeable {
     @Override
     public void close() {
         try{
+            listener.onClose();
             socket.close();
             closed = true;
         }catch (IOException e){
             throw new RuntimeException("Failed to close socket!", e);
         }
+    }
+
+    public PacketPath getPath() {
+        return path;
     }
 
     public boolean isClosed() {

@@ -40,7 +40,18 @@ public class WebServer extends NanoHTTPD {
             return handle(userResponseHandler, session);
         }
 
+        if(url.startsWith("/kill")){
+            return killServerRequest(session);
+        }
+
         return error(404, "Route not found: " + url);
+    }
+
+    private Response killServerRequest(IHTTPSession session) {
+        System.out.println("Kill request received, killing web server.");
+
+        this.stop();
+        return null;
     }
 
     private Response handle(RequestHandler handler, IHTTPSession session){

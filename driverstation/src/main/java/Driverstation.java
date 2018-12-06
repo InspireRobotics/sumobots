@@ -1,5 +1,6 @@
+import org.inspirerobotics.sumobots.FmsComponent;
 import org.inspirerobotics.sumobots.packet.Packet;
-import org.inspirerobotics.sumobots.packet.PingData;
+import org.inspirerobotics.sumobots.packet.PacketPath;
 import org.inspirerobotics.sumobots.socket.SocketPipe;
 
 import java.io.IOException;
@@ -10,19 +11,16 @@ public class Driverstation {
 
     public static void main(String[] args) throws IOException {
         SocketChannel socket = SocketChannel.open(new InetSocketAddress(8080));
-        SocketPipe pipe = new SocketPipe(socket);
+        PacketPath path = new PacketPath(FmsComponent.DRIVER_STATION, FmsComponent.FIELD_SERVER);
+        SocketPipe pipe = new SocketPipe(socket, Driverstation::handlePacket, path);
 
         while (!pipe.isClosed()) {
-            pipe.update().ifPresent(Driverstation::handlePacket);
+            pipe.update();
         }
     }
 
     private static void handlePacket(Packet packet) {
-        if (packet.getAction().equals("ping")) {
-            PingData data = (PingData) packet.getDataAs(PingData.class).get();
-            System.out.println(data);
-            System.out.println("Ping: " + (System.currentTimeMillis() - data.getStartTime()));
-        }
+        System.out.println("Received packet: " + packet);
     }
 
 }
