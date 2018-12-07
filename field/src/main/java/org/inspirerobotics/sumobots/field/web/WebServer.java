@@ -3,6 +3,7 @@ package org.inspirerobotics.sumobots.field.web;
 import fi.iki.elonen.NanoHTTPD;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.inspirerobotics.sumobots.field.Field;
 
 import java.io.IOException;
 
@@ -13,14 +14,16 @@ public class WebServer extends NanoHTTPD {
     public static final int NOT_IMPLEMENTED = 501;
     private static final Logger logger = LogManager.getLogger(WebServer.class);
 
+    private final Field field;
     private final StaticFileRequestHandler staticFileHandler;
     private final UserRequestHandler userResponseHandler;
 
-    public WebServer() {
+    public WebServer(Field field) {
         super(8000);
 
-        userResponseHandler = new UserRequestHandler();
-        staticFileHandler = new StaticFileRequestHandler();
+        this.field = field;
+        this.userResponseHandler = new UserRequestHandler();
+        this.staticFileHandler = new StaticFileRequestHandler();
     }
 
     public void start() throws IOException {
@@ -51,9 +54,9 @@ public class WebServer extends NanoHTTPD {
     }
 
     private Response killServerRequest(IHTTPSession session) {
-        logger.info("Kill request received, killing web server.");
+        logger.info("Kill request received, killing field system.");
 
-        this.stop();
+        field.stop();
         return null;
     }
 

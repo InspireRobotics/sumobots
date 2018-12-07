@@ -13,7 +13,7 @@ import java.util.List;
 public class DriverstationManager {
 
     private static final Logger logger = LogManager.getLogger(DriverstationManager.class);
-    private ArrayList<DriverstationConnection> connections = new ArrayList<>();
+    private final ArrayList<DriverstationConnection> connections = new ArrayList<>();
 
     public void manageNewConnection(SocketChannel socket) {
         DriverstationConnection conn = createConnectionPipeFromSocket(socket);

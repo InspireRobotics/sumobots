@@ -3,11 +3,11 @@ package org.inspirerobotics.sumobots.field;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.inspirerobotics.sumobots.field.driverstation.DriverstationManager;
+import org.inspirerobotics.sumobots.field.driverstation.DriverstationThread;
 import org.inspirerobotics.sumobots.field.server.DriverstationServer;
 import org.inspirerobotics.sumobots.field.web.WebServer;
 
 import java.io.IOException;
-import java.nio.channels.SocketChannel;
 
 public class Field {
 
@@ -17,6 +17,9 @@ public class Field {
     private WebServer webServer;
     private DriverstationServer dsServer;
     private DriverstationManager dsManager;
+    private DriverstationThread driverstationThread;
+
+    private volatile boolean running = true;
 
     public Field() {
         start();
@@ -24,7 +27,7 @@ public class Field {
 
     private void start() {
         try {
-            this.webServer = new WebServer();
+            this.webServer = new WebServer(this);
             this.webServer.start();
             this.dsServer = DriverstationServer.create();
             this.dsManager = new DriverstationManager();
@@ -33,36 +36,53 @@ public class Field {
             System.exit(FAILED_EXIT_CODE);
         }
 
+        startDriverstationServerThread();
         logger.info("Field has been started!");
     }
 
-    private void run() {
-        logger.info("Running the field!");
-
-        while (webServer.isAlive()) {
-            dsServer.acceptNext().ifPresent(this::newDriverstationConnection);
-            dsManager.update();
-        }
-
-        stop();
+    private void startDriverstationServerThread() {
+        driverstationThread = new DriverstationThread(this);
+        driverstationThread.setName("Driverstation Manager");
+        driverstationThread.setDaemon(false);
+        driverstationThread.start();
     }
 
-    private void newDriverstationConnection(SocketChannel socketChannel) {
-        dsManager.manageNewConnection(socketChannel);
-    }
-
-    private void stop() {
+    public synchronized void stop() {
+        running = false;
         logger.info("Stopping FMS");
         webServer.stop();
-        dsServer.close();
-        dsManager.closeConnections();
+        waitForStop();
         logger.info("FMS Stopped.");
         System.exit(0);
     }
 
-    public static void main(String[] args) {
-        Field application = new Field();
-        application.run();
+    private void waitForStop() {
+        try{
+            driverstationThread.join(5000);
+            logger.debug("Driverstation thread joined successfully!");
+        }catch (InterruptedException e){
+            logger.warn("Driverstation thread interrupted while closing!");
+        }
     }
 
+    public static void main(String[] args) {
+        Thread.currentThread().setName("Main Thread");
+        new Field();
+    }
+
+    public DriverstationManager getDsManager() {
+        return dsManager;
+    }
+
+    public DriverstationServer getDsServer() {
+        return dsServer;
+    }
+
+    public boolean isRunning() {
+        return running;
+    }
+
+    public WebServer getWebServer() {
+        return webServer;
+    }
 }

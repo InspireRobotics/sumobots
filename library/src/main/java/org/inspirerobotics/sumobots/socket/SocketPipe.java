@@ -2,6 +2,7 @@ package org.inspirerobotics.sumobots.socket;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.inspirerobotics.sumobots.SumobotsRuntimeException;
 import org.inspirerobotics.sumobots.packet.HeartbeatData;
 import org.inspirerobotics.sumobots.packet.Packet;
 import org.inspirerobotics.sumobots.packet.PacketFactory;
@@ -182,7 +183,7 @@ public class SocketPipe implements Closeable {
             socket.close();
             closed = true;
         }catch (IOException e){
-            throw new RuntimeException("Failed to close socket!", e);
+            throw new SumobotsRuntimeException("Failed to close socket!", e);
         }
     }
 
