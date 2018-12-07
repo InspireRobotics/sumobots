@@ -1,6 +1,8 @@
 package org.inspirerobotics.sumobots.field.web;
 
 import fi.iki.elonen.NanoHTTPD;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 
@@ -9,6 +11,7 @@ public class WebServer extends NanoHTTPD {
     public static final int FILE_NOT_FOUND = 404;
     public static final int INTERNAL_ERROR = 500;
     public static final int NOT_IMPLEMENTED = 501;
+    private static final Logger logger = LogManager.getLogger(WebServer.class);
 
     private final StaticFileRequestHandler staticFileHandler;
     private final UserRequestHandler userResponseHandler;
@@ -27,7 +30,7 @@ public class WebServer extends NanoHTTPD {
     @Override
     public Response serve(IHTTPSession session) {
         String url = session.getUri();
-        System.out.println("Handling request: " + url);
+        logger.debug("Handling request: " + url);
 
         if(url.equals("/"))
             return staticFileHandler.handleRequestWithUrl("/static/index.html");
@@ -48,7 +51,7 @@ public class WebServer extends NanoHTTPD {
     }
 
     private Response killServerRequest(IHTTPSession session) {
-        System.out.println("Kill request received, killing web server.");
+        logger.info("Kill request received, killing web server.");
 
         this.stop();
         return null;
@@ -63,7 +66,7 @@ public class WebServer extends NanoHTTPD {
         builder.append("<h1>Error: " + errorCode + " </h1>");
         builder.append("<p>" + desc + "</p>");
 
-        System.err.printf("Error (%d): %s\n", errorCode, desc);
+        logger.error("Error ({}): {}", errorCode, desc);
 
         return newFixedLengthResponse(builder.toString());
     }

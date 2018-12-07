@@ -1,6 +1,8 @@
 package org.inspirerobotics.sumobots.field.web;
 
 import fi.iki.elonen.NanoHTTPD;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -8,6 +10,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 public class StaticFileRequestHandler implements RequestHandler {
+
+    private static final Logger logger = LogManager.getLogger(StaticFileRequestHandler.class);
 
     public NanoHTTPD.Response handleRequest(NanoHTTPD.IHTTPSession session) {
         return handleRequestWithUrl(session.getUri());
@@ -31,6 +35,7 @@ public class StaticFileRequestHandler implements RequestHandler {
                 buffer.append(br.readLine() + "\n");
             }
         }catch(IOException e){
+            logger.error("Failed while handling user request: {}. Error: {}", path, e);
             WebServer.error(WebServer.INTERNAL_ERROR, "Failed to load file at path: " + path);
         }
 
@@ -46,7 +51,7 @@ public class StaticFileRequestHandler implements RequestHandler {
             return "text/javascript";
         }
 
-        System.out.println("Unknown file type for path: " + path);
+        logger.warn("Unknown file type for path: " + path);
         return NanoHTTPD.MIME_PLAINTEXT;
     }
 

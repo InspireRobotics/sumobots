@@ -1,5 +1,7 @@
 package org.inspirerobotics.sumobots.field;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.inspirerobotics.sumobots.field.driverstation.DriverstationManager;
 import org.inspirerobotics.sumobots.field.server.DriverstationServer;
 import org.inspirerobotics.sumobots.field.web.WebServer;
@@ -8,6 +10,9 @@ import java.io.IOException;
 import java.nio.channels.SocketChannel;
 
 public class Field {
+
+    public static final int FAILED_EXIT_CODE = 1;
+    private static final Logger logger = LogManager.getLogger(Field.class);
 
     private WebServer webServer;
     private DriverstationServer dsServer;
@@ -24,15 +29,15 @@ public class Field {
             this.dsServer = DriverstationServer.create();
             this.dsManager = new DriverstationManager();
         } catch (IOException e) {
-            System.out.println("Failed to start the field");
-            e.printStackTrace();
+            logger.fatal("Failed to start the field", e);
+            System.exit(FAILED_EXIT_CODE);
         }
 
-        System.out.println("Field has been started!");
+        logger.info("Field has been started!");
     }
 
     private void run() {
-        System.out.println("Running the field!");
+        logger.info("Running the field!");
 
         while (webServer.isAlive()) {
             dsServer.acceptNext().ifPresent(this::newDriverstationConnection);
@@ -47,11 +52,11 @@ public class Field {
     }
 
     private void stop() {
-        System.out.println("Stopping FMS");
+        logger.info("Stopping FMS");
         webServer.stop();
         dsServer.close();
         dsManager.closeConnections();
-        System.out.println("FMS Stopped.");
+        logger.info("FMS Stopped.");
         System.exit(0);
     }
 

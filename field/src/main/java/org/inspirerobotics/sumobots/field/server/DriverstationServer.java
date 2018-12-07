@@ -1,5 +1,8 @@
 package org.inspirerobotics.sumobots.field.server;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -9,6 +12,7 @@ import java.util.Optional;
 
 public class DriverstationServer implements Closeable {
 
+    private static final Logger logger = LogManager.getLogger(DriverstationServer.class);
     private final ServerSocketChannel socket;
     private boolean closed = false;
 
@@ -30,7 +34,7 @@ public class DriverstationServer implements Closeable {
         try {
             output = Optional.ofNullable(socket.accept());
         }catch (IOException e){
-            System.err.println("Error while accepting in DS server! Closing server: " + e);
+            logger.error("Error while accepting in DS server. Closing server!" + e);
         }
 
         return output;

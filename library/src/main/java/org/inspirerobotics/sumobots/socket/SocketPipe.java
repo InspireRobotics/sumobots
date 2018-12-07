@@ -1,5 +1,7 @@
 package org.inspirerobotics.sumobots.socket;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.inspirerobotics.sumobots.packet.HeartbeatData;
 import org.inspirerobotics.sumobots.packet.Packet;
 import org.inspirerobotics.sumobots.packet.PacketFactory;
@@ -15,6 +17,7 @@ import java.util.Optional;
 
 public class SocketPipe implements Closeable {
 
+    private static final Logger logger = LogManager.getLogger(SocketPipe.class);
     private static final int HEADER_SIZE = 4;
 
     private final SocketChannel socket;
@@ -40,8 +43,8 @@ public class SocketPipe implements Closeable {
         try{
             socket.configureBlocking(false);
         }catch (IOException e){
-            System.err.println("Failed to disable blocking for socket pipe: " + e);
-            System.err.println("Closing socket pipe due to error!");
+            logger.error("Failed to disable blocking for socket pipe: " + e);
+            logger.error("Closing socket pipe due to error!");
             close();
         }
 
@@ -57,8 +60,8 @@ public class SocketPipe implements Closeable {
         try{
             readFromSocket().ifPresent(this::handlePacketReceived);
         }catch (IOException e){
-            System.err.println("Failed while reading from socket pipe: " + e);
-            System.err.println("Closing socket pipe due to error!");
+            logger.error("Failed while reading from socket pipe: " + e);
+            logger.error("Closing socket pipe due to error!");
             close();
         }
 
@@ -82,7 +85,7 @@ public class SocketPipe implements Closeable {
         }
 
         if(lastHeartbeatReceivedTime + 5000 < System.currentTimeMillis()){
-            System.out.println("Lost signal with connection!");
+            logger.info("Lost signal with connection: {}", this);
             close();
             return;
         }
@@ -98,13 +101,13 @@ public class SocketPipe implements Closeable {
         HeartbeatData data = (HeartbeatData) packet.getDataAs(HeartbeatData.class).get();
         ping = (int) (lastHeartbeatReceivedTime - data.getSentTime());
 
-        System.out.println("ping: " + ping + "ms");
+        logger.trace("{}: ping: " + ping + "ms", this);
         checkPing();
     }
 
     private void checkPing() {
         if(ping > 25)
-            System.out.println("High ping: " + ping + "ms");
+            logger.debug("{}: High ping: " + ping + "ms", this);
     }
 
     private Optional<Packet> readFromSocket() throws IOException {
@@ -149,12 +152,12 @@ public class SocketPipe implements Closeable {
         ByteBuffer buffer = createBufferFromBytes(toUTF8Bytes(characters));
         buffer.flip();
 
-        System.out.println("Sending packet: " + characters);
+        logger.trace("{}: Sending packet: " + characters, this);
         try{
             socket.write(buffer);
         }catch (IOException e){
-            System.err.println("Failed while writing to socket pipe: " + e);
-            System.err.println("Closing socket pipe due to error!");
+            logger.error("Failed while writing to socket pipe: " + e);
+            logger.error("Closing socket pipe due to error!");
             close();
         }
     }
@@ -181,6 +184,20 @@ public class SocketPipe implements Closeable {
         }catch (IOException e){
             throw new RuntimeException("Failed to close socket!", e);
         }
+    }
+
+    @Override
+    public String toString() {
+        if(closed)
+            return "SocketPipe[closed]";
+
+        try{
+            return String.format("SocketPipe[%s]", this.socket.getRemoteAddress());
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
+        return "SocketPipe[]";
     }
 
     public PacketPath getPath() {
