@@ -201,6 +201,14 @@ public class SocketPipe implements Closeable {
         return "SocketPipe[]";
     }
 
+    public int getPing() {
+        return ping;
+    }
+
+    public SocketChannel getSocket() {
+        return socket;
+    }
+
     public PacketPath getPath() {
         return path;
     }

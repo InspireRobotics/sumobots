@@ -21,7 +21,7 @@ public class StaticFileRequestHandler implements RequestHandler {
         InputStream input = urlToInputStream(url);
 
         if(input == null)
-            return WebServer.error(WebServer.FILE_NOT_FOUND, "Failed to find file at path " + url);
+            return WebServer.error(WebServer.NOT_FOUND, "Failed to find file at path " + url);
 
         return loadSrc(input, url);
     }
@@ -48,7 +48,7 @@ public class StaticFileRequestHandler implements RequestHandler {
         }else if(path.endsWith(".html")){
             return "text/html";
         }else if(path.endsWith(".js")){
-            return "text/javascript";
+            return "application/javascript";
         }
 
         logger.warn("Unknown file type for path: " + path);

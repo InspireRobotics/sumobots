@@ -65,4 +65,8 @@ public class DriverstationManager {
             connection.getPipe().ifPresent(SocketPipe::close);
         }
     }
+
+    public ArrayList<DriverstationConnection> getConnections() {
+        return connections;
+    }
 }

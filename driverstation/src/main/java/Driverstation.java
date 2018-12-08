@@ -14,16 +14,30 @@ public class Driverstation {
     private static final Logger logger = LogManager.getLogger(Driverstation.class);
 
     public static void main(String[] args) throws IOException {
+        logger.info("Start!");
+
+        for(int i = 0; i < 4; i++){
+            new Thread(() -> {
+                try {
+                    run();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }).start();
+        }
+
+        logger.info("Stopping driverstation!");
+    }
+
+    public static void run() throws IOException{
         SocketChannel socket = SocketChannel.open(new InetSocketAddress(8080));
         PacketPath path = new PacketPath(FmsComponent.DRIVER_STATION, FmsComponent.FIELD_SERVER);
         SocketPipe pipe = new SocketPipe(socket, Driverstation::handlePacket, path);
-        logger.info("Starting driverstation!");
 
         while (!pipe.isClosed()) {
             pipe.update();
         }
 
-        logger.info("Stopping driverstation!");
     }
 
     private static void handlePacket(Packet packet) {

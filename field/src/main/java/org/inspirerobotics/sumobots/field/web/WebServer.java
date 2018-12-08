@@ -9,14 +9,18 @@ import java.io.IOException;
 
 public class WebServer extends NanoHTTPD {
 
-    public static final int FILE_NOT_FOUND = 404;
-    public static final int INTERNAL_ERROR = 500;
-    public static final int NOT_IMPLEMENTED = 501;
+    public static final Response.Status NOT_FOUND = Response.Status.NOT_FOUND;
+    public static final Response.Status INTERNAL_ERROR = Response.Status.INTERNAL_ERROR;
+    public static final Response.Status NOT_IMPLEMENTED = Response.Status.NOT_IMPLEMENTED;
+    public static final Response.Status OK = Response.Status.OK;
+    public static final String MIME_JSON = "application/json";
+
     private static final Logger logger = LogManager.getLogger(WebServer.class);
 
     private final Field field;
     private final StaticFileRequestHandler staticFileHandler;
     private final UserRequestHandler userResponseHandler;
+    private final FieldRequestHandler fieldRequestHandler;
 
     public WebServer(Field field) {
         super(8000);
@@ -24,6 +28,7 @@ public class WebServer extends NanoHTTPD {
         this.field = field;
         this.userResponseHandler = new UserRequestHandler();
         this.staticFileHandler = new StaticFileRequestHandler();
+        this.fieldRequestHandler = new FieldRequestHandler(field);
     }
 
     public void start() throws IOException {
@@ -46,11 +51,15 @@ public class WebServer extends NanoHTTPD {
             return handle(userResponseHandler, session);
         }
 
+        if(url.startsWith("/field")){
+            return handle(fieldRequestHandler, session);
+        }
+
         if(url.startsWith("/kill")){
             return killServerRequest(session);
         }
 
-        return error(404, "Route not found: " + url);
+        return error(NOT_FOUND, "Route not found: " + url);
     }
 
     private Response killServerRequest(IHTTPSession session) {
@@ -64,12 +73,12 @@ public class WebServer extends NanoHTTPD {
         return handler.handleRequest(session);
     }
 
-    public static Response error(int errorCode, String desc) {
+    public static Response error(Response.Status status, String desc) {
         StringBuilder builder = new StringBuilder();
-        builder.append("<h1>Error: " + errorCode + " </h1>");
+        builder.append("<h1>Error: " + status.getRequestStatus() + " </h1>");
         builder.append("<p>" + desc + "</p>");
 
-        logger.error("Error ({}): {}", errorCode, desc);
+        logger.error("Error ({}): {}", status.getRequestStatus(), desc);
 
         return newFixedLengthResponse(builder.toString());
     }
