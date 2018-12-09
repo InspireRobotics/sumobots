@@ -3,7 +3,6 @@ package org.inspirerobotics.sumobots.packet;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.internal.LinkedTreeMap;
 import com.google.gson.reflect.TypeToken;
 import org.inspirerobotics.sumobots.FmsComponent;
 
@@ -84,6 +83,10 @@ public class Packet {
 
     public <T> Optional getDataAs(Class<T> t) {
         return data.map(data -> gson.fromJson(data, t));
+    }
+
+    public PacketPath getPath() {
+        return path;
     }
 
     @Override

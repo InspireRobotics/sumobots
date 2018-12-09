@@ -2,17 +2,19 @@ package org.inspirerobotics.sumobots.packet;
 
 import org.inspirerobotics.sumobots.FmsComponent;
 
+import java.util.Objects;
+
 public class PacketPath {
 
     private final FmsComponent source;
     private final FmsComponent destination;
 
     public PacketPath(FmsComponent source, FmsComponent destination) {
-        if(source == null)
-            throw new IllegalArgumentException("Source cannot be null!");
+        Objects.requireNonNull(source, "Source cannot be null");
+        Objects.requireNonNull(destination, "Destination cannot be null");
 
-        if(destination == null)
-            throw new IllegalArgumentException("Destination cannot be null!");
+        if(destination.equals(source))
+            throw new IllegalArgumentException("Destination cannot equal source");
 
         this.source = source;
         this.destination = destination;
