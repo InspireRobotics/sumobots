@@ -41,7 +41,7 @@ public class WebServer extends NanoHTTPD {
         logger.debug("Handling request: " + url);
 
         if(url.equals("/"))
-            return staticFileHandler.handleRequestWithUrl("index.html");
+            return staticFileHandler.handleRequestWithUrl("/index.html");
 
         if(url.startsWith("/static")){
             return handle(staticFileHandler, session);

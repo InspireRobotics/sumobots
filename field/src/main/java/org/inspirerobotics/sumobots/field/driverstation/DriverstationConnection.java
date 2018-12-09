@@ -18,6 +18,13 @@ public class DriverstationConnection implements SocketPipeListener {
         logger.debug("Packet received: {}", packet);
     }
 
+    public boolean isClosed(){
+        if(pipe.isPresent() == false)
+            return true;
+
+        return pipe.get().isClosed();
+    }
+
     public Optional<SocketPipe> getPipe() {
         return pipe;
     }

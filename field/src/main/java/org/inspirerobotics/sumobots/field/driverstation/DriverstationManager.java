@@ -9,6 +9,7 @@ import org.inspirerobotics.sumobots.socket.SocketPipe;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class DriverstationManager {
 
@@ -16,13 +17,14 @@ public class DriverstationManager {
     private final ArrayList<DriverstationConnection> connections = new ArrayList<>();
 
     public void manageNewConnection(SocketChannel socket) {
+        Objects.requireNonNull(socket, "Socket cannot be null");
         DriverstationConnection conn = createConnectionPipeFromSocket(socket);
 
         addConnection(conn);
     }
 
     private synchronized void addConnection(DriverstationConnection conn) {
-        logger.debug("Managing new connection: {}", conn.getPipe().orElse(null));
+        logger.debug("Managing new connection: {}", conn.getPipe().get());
         connections.add(conn);
     }
 
@@ -39,14 +41,7 @@ public class DriverstationManager {
         ArrayList<DriverstationConnection> closedConnections = new ArrayList<>();
 
         for (DriverstationConnection connection : connections) {
-            if (connection.getPipe().isPresent()) {
-                connection.getPipe().get().update();
-
-                if (connection.getPipe().get().isClosed())
-                    closedConnections.add(connection);
-            } else {
-                logger.warn("Found driverstation with null pipe: " + connection +
-                        ". Removing connection from manager!");
+            if(updateDriverstationConnection(connection)){
                 closedConnections.add(connection);
             }
         }
@@ -54,7 +49,22 @@ public class DriverstationManager {
         removeConnections(closedConnections);
     }
 
-    private void removeConnections(List<DriverstationConnection> connectionsToRemove) {
+    private boolean updateDriverstationConnection(DriverstationConnection connection) {
+        if (connection.isClosed()) {
+            return true;
+        }
+
+        if (connection.getPipe().isPresent() == false) {
+            logger.warn("Found driverstation with null pipe: " + connection +
+                    ". Removing connection from manager!");
+            return true;
+        }
+
+        connection.update();
+        return false;
+    }
+
+    void removeConnections(List<DriverstationConnection> connectionsToRemove) {
         for (DriverstationConnection conn : connectionsToRemove) {
             connections.remove(conn);
         }

@@ -4,7 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.inspirerobotics.sumobots.field.driverstation.DriverstationManager;
 import org.inspirerobotics.sumobots.field.driverstation.DriverstationThread;
-import org.inspirerobotics.sumobots.field.server.DriverstationServer;
+import org.inspirerobotics.sumobots.field.driverstation.DriverstationServer;
 import org.inspirerobotics.sumobots.field.web.WebServer;
 
 import java.io.IOException;

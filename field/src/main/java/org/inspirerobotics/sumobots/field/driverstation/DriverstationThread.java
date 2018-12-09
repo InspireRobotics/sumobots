@@ -4,7 +4,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.inspirerobotics.sumobots.SumobotsRuntimeException;
 import org.inspirerobotics.sumobots.field.Field;
-import org.inspirerobotics.sumobots.field.server.DriverstationServer;
 
 public class DriverstationThread extends Thread {
 

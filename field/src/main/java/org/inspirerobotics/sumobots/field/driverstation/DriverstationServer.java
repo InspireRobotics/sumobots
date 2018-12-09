@@ -1,7 +1,8 @@
-package org.inspirerobotics.sumobots.field.server;
+package org.inspirerobotics.sumobots.field.driverstation;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.inspirerobotics.sumobots.SumobotsRuntimeException;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -14,7 +15,6 @@ public class DriverstationServer implements Closeable {
 
     private static final Logger logger = LogManager.getLogger(DriverstationServer.class);
     private final ServerSocketChannel socket;
-    private boolean closed = false;
 
     public DriverstationServer(ServerSocketChannel socket) {
         this.socket = socket;
@@ -31,6 +31,10 @@ public class DriverstationServer implements Closeable {
     public Optional<SocketChannel> acceptNext(){
         Optional<SocketChannel> output = Optional.empty();
 
+        if(socket.isOpen() == false){
+            throw new SumobotsRuntimeException("Server cannot accept while closed!");
+        }
+
         try {
             output = Optional.ofNullable(socket.accept());
         }catch (IOException e){
@@ -43,7 +47,6 @@ public class DriverstationServer implements Closeable {
     public void close(){
         try {
             socket.close();
-            closed = true;
         }catch (IOException e){
             throw new RuntimeException("Failed to close DS server!", e);
         }
