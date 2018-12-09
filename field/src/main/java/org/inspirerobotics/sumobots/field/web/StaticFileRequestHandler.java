@@ -42,17 +42,8 @@ public class StaticFileRequestHandler implements RequestHandler {
         return NanoHTTPD.newFixedLengthResponse(NanoHTTPD.Response.Status.OK, getMimeType(path), buffer.toString());
     }
 
-    private String getMimeType(String path) {
-        if(path.endsWith(".css")){
-            return "text/css";
-        }else if(path.endsWith(".html")){
-            return "text/html";
-        }else if(path.endsWith(".js")){
-            return "application/javascript";
-        }
-
-        logger.warn("Unknown file type for path: " + path);
-        return NanoHTTPD.MIME_PLAINTEXT;
+    public static String getMimeType(String path) {
+        return WebServer.getMimeTypeForFile(path);
     }
 
     private InputStream urlToInputStream(String url) {
