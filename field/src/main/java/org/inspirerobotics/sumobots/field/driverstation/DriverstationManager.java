@@ -51,6 +51,7 @@ public class DriverstationManager {
 
     private boolean updateDriverstationConnection(DriverstationConnection connection) {
         if (connection.isClosed()) {
+            logger.debug("Found (and removing) closed connection: " + connection);
             return true;
         }
 
@@ -60,12 +61,13 @@ public class DriverstationManager {
             return true;
         }
 
-        connection.update();
+        connection.updatePipe();
         return false;
     }
 
     void removeConnections(List<DriverstationConnection> connectionsToRemove) {
         for (DriverstationConnection conn : connectionsToRemove) {
+            logger.trace("Removing connection: " + conn);
             connections.remove(conn);
         }
     }
