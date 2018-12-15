@@ -1,0 +1,38 @@
+.statusBoxGood {
+    -fx-text-fill: white;
+    -fx-background-color: green;
+}
+
+.statusBoxBad {
+    -fx-text-fill: white;
+    -fx-background-color: red;
+}
+
+.statusBoxUnknown {
+    -fx-text-fill: white;
+    -fx-background-color: #3a3a3a;
+}
+
+.toggleButtonSelected {
+    -fx-text-fill: black;
+    -fx-alignment: center ;
+    -fx-opacity: .75 ;
+    -fx-background-color: #cccccc;
+}
+
+.toggleButtonNotSelected {
+    -fx-text-fill: black;
+    -fx-alignment: center ;
+    -fx-opacity: 1.0 ;
+    -fx-background-color: #bbbbbb;
+}
+
+.statusLabelEnabled {
+    -fx-text-fill: green;
+    -fx-background-color: #aaaaaa;
+}
+
+.statusLabelDisabled {
+    -fx-text-fill: red;
+    -fx-background-color: #aaaaaa;
+}
