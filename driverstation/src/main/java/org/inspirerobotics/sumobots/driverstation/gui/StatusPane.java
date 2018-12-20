@@ -5,8 +5,11 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
+import org.inspirerobotics.sumobots.SumobotsRuntimeException;
+import org.inspirerobotics.sumobots.driverstation.state.DriverstationState;
 import org.inspirerobotics.sumobots.driverstation.gui.file.FXMLFileLoader;
 import org.inspirerobotics.sumobots.driverstation.gui.file.StylesheetLoader;
+import org.inspirerobotics.sumobots.driverstation.util.BackendEventQueue;
 
 public class StatusPane extends AnchorPane {
 
@@ -24,7 +27,6 @@ public class StatusPane extends AnchorPane {
     @FXML
     private Label statusLabel;
 
-
     public StatusPane() {
         FXMLFileLoader.load("status_pane.fxml", this);
         StylesheetLoader.load("status_pane", this);
@@ -35,9 +37,9 @@ public class StatusPane extends AnchorPane {
     }
 
     private void initStatusBoxes() {
-        styleStatusBox(robotStatusBox, StatusBoxState.BAD);
-        styleStatusBox(joystickStatusBox, StatusBoxState.GOOD);
-        styleStatusBox(fieldStatusBox, StatusBoxState.UNKNOWN);
+        styleStatusBox(robotStatusBox, StatusBoxState.DISCONNECTED);
+        styleStatusBox(joystickStatusBox, StatusBoxState.DISCONNECTED);
+        styleStatusBox(fieldStatusBox, StatusBoxState.DISCONNECTED);
     }
 
     private void styleStatusBox(TextField box, StatusBoxState state){
@@ -45,11 +47,47 @@ public class StatusPane extends AnchorPane {
     }
 
     private void initEnableDisableButtons() {
-        disableButton.setOnAction(event -> setEnabled(false));
-        enableButton.setOnAction(event -> setEnabled(true));
+        disableButton.setOnAction(event -> onDisableButtonPressed());
+        enableButton.setOnAction(event -> onEnableButtonPressed());
     }
 
-    public void setEnabled(boolean enabled){
+    private void onEnableButtonPressed() {
+        BackendEventQueue.add(backendThread -> {
+            backendThread.getStateManager().attemptToEnable();
+        });
+    }
+
+    private void onDisableButtonPressed() {
+        BackendEventQueue.add(backendThread -> {
+            backendThread.getStateManager().attemptToDisable();
+        });
+    }
+
+    public void onStateUpdated(DriverstationState currentState) {
+        updateEnabled(currentState);
+        updateStatusBoxes(currentState);
+    }
+
+    private void updateStatusBoxes(DriverstationState currentState) {
+        styleStatusBox(robotStatusBox, StatusBoxState.fromBool(currentState.isRobotConnected()));
+        styleStatusBox(joystickStatusBox, StatusBoxState.fromBool(currentState.isJoysticksConnected()));
+        styleStatusBox(fieldStatusBox, StatusBoxState.fromBool(currentState.isFieldConnected()));
+    }
+
+    private void updateEnabled(DriverstationState currentState) {
+        switch (currentState.getCurrentState()){
+            case ENABLED:
+                setEnabled(true);
+                break;
+            case DISABLED:
+                setEnabled(false);
+                return;
+            default:
+                throw new SumobotsRuntimeException("Unknown time period: " + currentState.getCurrentState());
+        }
+    }
+
+    private void setEnabled(boolean enabled){
         if(enabled){
             GuiUtils.setStyleClass(enableButton, "toggleButtonSelected");
             GuiUtils.setStyleClass(disableButton, "toggleButtonNotSelected");
@@ -64,12 +102,16 @@ public class StatusPane extends AnchorPane {
     }
 }
 enum StatusBoxState{
-    GOOD("statusBoxGood"), BAD("statusBoxBad"), UNKNOWN("statusBoxUnknown");
+    CONNECTED("statusBoxConnected"), DISCONNECTED("statusBoxDisconnected");
 
     String styleClassName;
 
     StatusBoxState(String className) {
         this.styleClassName = className;
+    }
+
+    public static StatusBoxState fromBool(boolean value) {
+        return value ? CONNECTED : DISCONNECTED;
     }
 
     public String getStyleClassName() {

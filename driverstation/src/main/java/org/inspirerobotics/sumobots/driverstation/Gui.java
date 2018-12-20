@@ -7,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.inspirerobotics.sumobots.Version;
 import org.inspirerobotics.sumobots.driverstation.gui.RootPane;
+import org.inspirerobotics.sumobots.driverstation.state.DriverstationState;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -94,5 +95,12 @@ public class Gui extends Application implements Thread.UncaughtExceptionHandler 
 
     public static void main(String[] args) {
         launch(args);
+    }
+
+    public void updateDriverstationState(DriverstationState newState) {
+        if(stage != null){
+            stage.setTitle("Driverstation: " + newState.getCurrentState());
+            rootPane.onStateUpdated(newState);
+        }
     }
 }

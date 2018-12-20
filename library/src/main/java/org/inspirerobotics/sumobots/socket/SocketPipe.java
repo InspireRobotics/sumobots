@@ -61,7 +61,7 @@ public class SocketPipe implements Closeable {
         try{
             readFromSocket().ifPresent(this::handlePacketReceived);
         }catch (IOException e){
-            logger.error("Failed while reading from socket pipe: {}", e);
+            logger.error("Failed while reading from socket pipe", e);
             logger.error("Closing socket pipe due to error!");
             close();
         }

@@ -9,6 +9,7 @@ import org.inspirerobotics.sumobots.socket.SocketPipe;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.SocketTimeoutException;
 import java.nio.channels.SocketChannel;
 import java.util.Objects;
 import java.util.Optional;
@@ -27,8 +28,6 @@ public class FieldConnection {
         logger.info("Established connection with field: " + fieldConnection);
     }
 
-    // Noah - you need to handle what happens when the connection is closed
-
     public void update() {
         if(fieldConnection.isClosed() == false)
             fieldConnection.update();
@@ -40,8 +39,13 @@ public class FieldConnection {
 
     public static Optional<FieldConnection> connectToField() {
         try{
-            SocketChannel socket = SocketChannel.open(new InetSocketAddress(8080));
-            return Optional.of(onConnectionMade(socket));
+            SocketChannel socket = SocketChannel.open();
+            socket.socket().connect(new InetSocketAddress(8080), 1);
+
+            if(socket.socket().isConnected())
+                return Optional.of(onConnectionMade(socket));
+        }catch (SocketTimeoutException e){
+            logger.trace("Socket timeout reached! ");
         }catch (IOException e){
             logger.error("Error occurred while trying to connect to field: " + e);
         }
@@ -56,5 +60,9 @@ public class FieldConnection {
     public void close() {
         logger.info("Closing field connection!");
         fieldConnection.close();
+    }
+
+    public boolean isClosed(){
+        return fieldConnection.isClosed();
     }
 }

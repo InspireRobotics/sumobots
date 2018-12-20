@@ -1,16 +1,11 @@
-.statusBoxGood {
+.statusBoxConnected {
     -fx-text-fill: white;
     -fx-background-color: green;
 }
 
-.statusBoxBad {
+.statusBoxDisconnected {
     -fx-text-fill: white;
     -fx-background-color: red;
-}
-
-.statusBoxUnknown {
-    -fx-text-fill: white;
-    -fx-background-color: #3a3a3a;
 }
 
 .toggleButtonSelected {
