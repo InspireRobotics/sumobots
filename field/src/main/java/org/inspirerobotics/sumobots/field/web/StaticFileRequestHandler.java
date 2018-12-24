@@ -21,7 +21,7 @@ public class StaticFileRequestHandler implements RequestHandler {
         InputStream input = urlToInputStream(url);
 
         if(input == null)
-            return WebServer.error(WebServer.NOT_FOUND, "Failed to find file at path " + url);
+            return WebServer.error(WebServer.NOT_FOUND, "Failed to find fxml at path " + url);
 
         return loadSrc(input, url);
     }
@@ -36,7 +36,7 @@ public class StaticFileRequestHandler implements RequestHandler {
             }
         }catch(IOException e){
             logger.error("Failed while handling user request: {}. Error: {}", path, e);
-            WebServer.error(WebServer.INTERNAL_ERROR, "Failed to load file at path: " + path);
+            WebServer.error(WebServer.INTERNAL_ERROR, "Failed to load fxml at path: " + path);
         }
 
         return NanoHTTPD.newFixedLengthResponse(NanoHTTPD.Response.Status.OK, getMimeType(path), buffer.toString());

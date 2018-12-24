@@ -6,12 +6,13 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import org.inspirerobotics.sumobots.SumobotsRuntimeException;
+import org.inspirerobotics.sumobots.driverstation.gui.fxml.FXMLFileLoader;
+import org.inspirerobotics.sumobots.driverstation.gui.style.StyleManager;
+import org.inspirerobotics.sumobots.driverstation.gui.style.Styleable;
 import org.inspirerobotics.sumobots.driverstation.state.DriverstationState;
-import org.inspirerobotics.sumobots.driverstation.gui.file.FXMLFileLoader;
-import org.inspirerobotics.sumobots.driverstation.gui.file.StylesheetLoader;
 import org.inspirerobotics.sumobots.driverstation.util.BackendEventQueue;
 
-public class StatusPane extends AnchorPane {
+public class StatusPane extends AnchorPane implements Styleable {
 
     @FXML
     private TextField fieldStatusBox;
@@ -29,11 +30,16 @@ public class StatusPane extends AnchorPane {
 
     public StatusPane() {
         FXMLFileLoader.load("status_pane.fxml", this);
-        StylesheetLoader.load("status_pane", this);
+        StyleManager.getInstance().addChild(this);
 
         initStatusBoxes();
         initEnableDisableButtons();
         setEnabled(false);
+    }
+
+    @Override
+    public String getStylesheetName() {
+        return "status_pane";
     }
 
     private void initStatusBoxes() {

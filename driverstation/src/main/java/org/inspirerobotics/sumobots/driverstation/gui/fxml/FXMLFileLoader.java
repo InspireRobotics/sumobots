@@ -1,4 +1,4 @@
-package org.inspirerobotics.sumobots.driverstation.gui.file;
+package org.inspirerobotics.sumobots.driverstation.gui.fxml;
 
 import javafx.fxml.FXMLLoader;
 import org.apache.logging.log4j.LogManager;
@@ -21,14 +21,14 @@ public class FXMLFileLoader {
         fxmlLoader.setRoot(root);
 
         if (fxmlLoader.getLocation() == null) {
-            RuntimeException e = new GuiFileLoadException("Failed to find file " + name);
+            RuntimeException e = new FXMLFileLoadException("Failed to find fxml " + name);
             throw e;
         }
 
         try {
             fxmlLoader.load();
         } catch (IOException e) {
-            throw new GuiFileLoadException("Failed to load file: " + name, e);
+            throw new FXMLFileLoadException("Failed to load fxml: " + name, e);
         }
 
         logger.debug("Loaded " + name);
