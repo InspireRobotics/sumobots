@@ -17,7 +17,7 @@ public class DriverstationState implements Cloneable{
 
     public DriverstationState(DriverstationMode mode, ComponentState currentState) {
         Objects.requireNonNull(mode, "DriverstationMode cannot be null!");
-        Objects.requireNonNull(mode, "TimePeriod cannot be null!");
+        Objects.requireNonNull(currentState, "ComponentState cannot be null!");
 
         this.mode = mode;
         this.currentState = currentState;
@@ -67,6 +67,24 @@ public class DriverstationState implements Cloneable{
         }catch (CloneNotSupportedException e){
             throw new SumobotsRuntimeException(e);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof DriverstationState)) return false;
+        DriverstationState that = (DriverstationState) o;
+        return startTime == that.startTime &&
+                fieldConnected == that.fieldConnected &&
+                robotConnected == that.robotConnected &&
+                joysticksConnected == that.joysticksConnected &&
+                mode == that.mode &&
+                currentState == that.currentState;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(mode, currentState, startTime, fieldConnected, robotConnected, joysticksConnected);
     }
 
     @Override

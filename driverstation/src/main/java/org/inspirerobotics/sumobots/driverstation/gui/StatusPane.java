@@ -15,18 +15,18 @@ import org.inspirerobotics.sumobots.driverstation.util.BackendEventQueue;
 public class StatusPane extends AnchorPane implements Styleable {
 
     @FXML
-    private TextField fieldStatusBox;
+    TextField fieldStatusBox;
     @FXML
-    private TextField joystickStatusBox;
+    TextField joystickStatusBox;
     @FXML
-    private TextField robotStatusBox;
+    TextField robotStatusBox;
 
     @FXML
-    private Button enableButton;
+    Button enableButton;
     @FXML
-    private Button disableButton;
+    Button disableButton;
     @FXML
-    private Label statusLabel;
+    Label statusLabel;
 
     public StatusPane() {
         FXMLFileLoader.load("status_pane.fxml", this);

@@ -15,14 +15,20 @@ import java.io.StringWriter;
 public class Gui extends Application implements Thread.UncaughtExceptionHandler {
 
     private static final Logger logger = LogManager.getLogger(Gui.class);
-    private final BackendWorker backendWorker = new BackendWorker(this);
-    private final Thread backendThread = new Thread(backendWorker);
+    private BackendWorker backendWorker;
+    private Thread backendThread;
 
     private Stage stage;
     private RootPane rootPane;
 
     @Override
     public void init() {
+        backendWorker = new BackendWorker(this);
+        createBackendWorkerThread();
+    }
+
+    private void createBackendWorkerThread() {
+        backendThread = new Thread(backendWorker);
         backendThread.setName("Backend Thread");
         backendThread.setDaemon(false);
         backendThread.setUncaughtExceptionHandler(this);

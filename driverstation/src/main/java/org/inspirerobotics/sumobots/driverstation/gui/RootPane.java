@@ -35,4 +35,16 @@ public class RootPane extends AnchorPane {
     public void onStateUpdated(DriverstationState currentState) {
         statusPane.onStateUpdated(currentState);
     }
+
+    BorderPane getBorderPane() {
+        return borderPane;
+    }
+
+    SettingsMenu getSettingsMenu() {
+        return settingsMenu;
+    }
+
+    StatusPane getStatusPane() {
+        return statusPane;
+    }
 }

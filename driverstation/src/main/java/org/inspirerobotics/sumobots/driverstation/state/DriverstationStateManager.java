@@ -35,10 +35,11 @@ public class DriverstationStateManager {
     }
 
 
-    private void syncStateWithGui() {
+    protected void syncStateWithGui() {
         logger.trace("Syncing state with GUI!");
 
         DriverstationState clonedState = this.currentState.clone();
+
         Platform.runLater(() -> gui.updateDriverstationState(clonedState));
     }
 
@@ -50,7 +51,7 @@ public class DriverstationStateManager {
         attemptToChangeComponentState(ComponentState.ENABLED);
     }
 
-    private void attemptToChangeComponentState(ComponentState componentState){
+    protected void attemptToChangeComponentState(ComponentState componentState){
         DriverstationState newState = new DriverstationState(this.currentState.getMode(), componentState);
         newState.setFieldConnected(backend.getFieldConnection().isPresent());
 

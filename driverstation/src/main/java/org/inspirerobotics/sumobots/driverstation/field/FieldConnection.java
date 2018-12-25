@@ -3,6 +3,7 @@ package org.inspirerobotics.sumobots.driverstation.field;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.inspirerobotics.sumobots.FmsComponent;
+import org.inspirerobotics.sumobots.SumobotsRuntimeException;
 import org.inspirerobotics.sumobots.packet.Packet;
 import org.inspirerobotics.sumobots.packet.PacketPath;
 import org.inspirerobotics.sumobots.socket.SocketPipe;
@@ -20,7 +21,7 @@ public class FieldConnection {
 
     private final SocketPipe fieldConnection;
 
-    private FieldConnection(SocketChannel channel) {
+    FieldConnection(SocketChannel channel) {
         Objects.requireNonNull(channel, "Field connection cannot be null!");
 
         PacketPath path = new PacketPath(FmsComponent.DRIVER_STATION, FmsComponent.FIELD_SERVER);
@@ -31,6 +32,9 @@ public class FieldConnection {
     public void update() {
         if(fieldConnection.isClosed() == false)
             fieldConnection.update();
+        else
+            throw new SumobotsRuntimeException("Cannot update while closed!");
+
     }
 
     private void handlePacket(Packet packet) {
@@ -60,6 +64,10 @@ public class FieldConnection {
     public void close() {
         logger.info("Closing field connection!");
         fieldConnection.close();
+    }
+
+    SocketPipe getFieldConnection() {
+        return fieldConnection;
     }
 
     public boolean isClosed(){
