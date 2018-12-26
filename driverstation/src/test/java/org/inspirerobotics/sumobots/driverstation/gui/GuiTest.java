@@ -12,9 +12,11 @@ import org.testfx.framework.junit5.ApplicationTest;
 public class GuiTest extends ApplicationTest {
 
     private final RootPane pane = new RootPane();
+    private Stage stage;
 
     @Override
     public void start(Stage stage) {
+        this.stage = stage;
         stage.setScene(pane.createScene());
     }
 
@@ -24,6 +26,10 @@ public class GuiTest extends ApplicationTest {
 
     protected static void assertContainsClass(String className, Node node){
         Assertions.assertTrue(node.getStyleClass().contains(className));
+    }
+
+    public Stage getStage() {
+        return stage;
     }
 
     public RootPane getPane() {

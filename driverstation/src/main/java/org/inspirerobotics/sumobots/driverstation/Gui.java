@@ -7,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.inspirerobotics.sumobots.Version;
 import org.inspirerobotics.sumobots.driverstation.gui.RootPane;
+import org.inspirerobotics.sumobots.driverstation.gui.StagePositionManager;
 import org.inspirerobotics.sumobots.driverstation.state.DriverstationState;
 
 import java.io.PrintWriter;
@@ -56,6 +57,8 @@ public class Gui extends Application implements Thread.UncaughtExceptionHandler 
             stage.hide();
             shutdownAndTerminate(0);
         });
+
+        new StagePositionManager(stage);
     }
 
     private void initScene() {

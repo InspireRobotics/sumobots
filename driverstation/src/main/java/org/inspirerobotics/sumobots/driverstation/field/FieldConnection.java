@@ -33,7 +33,7 @@ public class FieldConnection {
         if(fieldConnection.isClosed() == false)
             fieldConnection.update();
         else
-            throw new SumobotsRuntimeException("Cannot update while closed!");
+            throw new SumobotsRuntimeException("Cannot updateDocked while closed!");
 
     }
 
