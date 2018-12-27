@@ -8,4 +8,6 @@ public interface RobotBase {
 
     void onDisable();
 
+    default void onShutdown(){}
+
 }
