@@ -24,11 +24,11 @@ public class RobotContainer implements Runnable{
         logger.info("Robot Container started: running robot code!");
         running = true;
 
-        while (true){
+        while (running){
             runRobotEvents();
         }
 
-//        onShutdown();
+        onShutdown();
     }
 
     private void runRobotEvents() {
