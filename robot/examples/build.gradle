@@ -11,13 +11,18 @@ repositories {
     mavenCentral()
 }
 
-test{
-    dependsOn(':field:test', ':driverstation:test', ':library:test', ":robot:test", ":robot:examples:test")
+dependencies {
+    compile group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.11.1'
+    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.11.1'
+    compile project(':library')
+    compile project(':robot')
 
-    testLogging {
-        events "failed"
-        exceptionFormat = 'full'
-    }
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
+}
+
+test {
+    useJUnitPlatform()
 
     outputs.upToDateWhen { false }
 
@@ -33,3 +38,4 @@ test{
         }
     }
 }
+

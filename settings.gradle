@@ -2,4 +2,5 @@ rootProject.name = 'sumobots'
 include 'field'
 include 'driverstation'
 include 'library'
-
+include 'robot'
+include 'robot:examples'
