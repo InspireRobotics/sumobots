@@ -2,6 +2,7 @@ package org.inspirerobotics.sumobots.field.driverstation;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.inspirerobotics.sumobots.Ports;
 import org.inspirerobotics.sumobots.SumobotsRuntimeException;
 
 import java.io.Closeable;
@@ -23,7 +24,7 @@ public class DriverstationServer implements Closeable {
     public static DriverstationServer create() throws IOException{
         ServerSocketChannel socket = ServerSocketChannel.open();
         socket.configureBlocking(false);
-        socket.socket().bind(new InetSocketAddress(8080));
+        socket.socket().bind(new InetSocketAddress(Ports.FIELD_DS));
 
         return new DriverstationServer(socket);
     }

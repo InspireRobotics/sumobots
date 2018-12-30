@@ -4,9 +4,13 @@ public interface RobotBase {
 
     void init();
 
-    void onEnable();
+    default void onEnable(){};
 
-    void onDisable();
+    default void onDisable(){};
+
+    void disablePeriodic();
+
+    void enablePeriodic();
 
     default void onShutdown(){}
 

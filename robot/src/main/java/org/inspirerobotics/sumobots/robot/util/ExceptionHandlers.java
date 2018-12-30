@@ -15,7 +15,7 @@ public class ExceptionHandlers {
         };
     }
 
-    public static Thread.UncaughtExceptionHandler mainThreadHandler() {
+    public static Thread.UncaughtExceptionHandler nonRobotHandler() {
         return (thread, exception) -> {
             logException(thread, exception);
 

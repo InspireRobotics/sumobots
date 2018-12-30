@@ -22,4 +22,14 @@ public class BasicRobot implements RobotBase {
     public void onDisable() {
         logger.info("Disable!");
     }
+
+    @Override
+    public void disablePeriodic() {
+
+    }
+
+    @Override
+    public void enablePeriodic() {
+
+    }
 }

@@ -7,7 +7,4 @@ public interface SocketPipeListener {
     void onPacketReceived(Packet packet);
 
     default void onClose(){}
-
-    default void update(){}
-
 }

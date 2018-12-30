@@ -51,9 +51,10 @@ public class DriverstationStateManager {
         attemptToChangeComponentState(ComponentState.ENABLED);
     }
 
-    protected void attemptToChangeComponentState(ComponentState componentState){
+    public void attemptToChangeComponentState(ComponentState componentState){
         DriverstationState newState = new DriverstationState(this.currentState.getMode(), componentState);
         newState.setFieldConnected(backend.getFieldConnection().isPresent());
+        newState.setRobotConnected(backend.getRobotConnection().isPresent());
 
         setCurrentState(newState);
     }

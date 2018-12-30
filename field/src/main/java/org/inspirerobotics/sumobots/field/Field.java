@@ -32,7 +32,7 @@ public class Field {
             this.dsServer = DriverstationServer.create();
             this.dsManager = new DriverstationManager();
         } catch (IOException e) {
-            logger.fatal("Failed to start the field", e);
+            logger.fatal("Failed to start the network", e);
             System.exit(FAILED_EXIT_CODE);
         }
 

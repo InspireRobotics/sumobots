@@ -55,7 +55,6 @@ public class SocketPipe implements Closeable {
         if(closed)
             throw new IllegalStateException("Cannot update while closed!");
 
-        listener.update();
         updateHeartbeat();
 
         try{

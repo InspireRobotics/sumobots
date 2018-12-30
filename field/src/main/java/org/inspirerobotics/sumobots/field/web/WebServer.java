@@ -3,6 +3,7 @@ package org.inspirerobotics.sumobots.field.web;
 import fi.iki.elonen.NanoHTTPD;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.inspirerobotics.sumobots.Ports;
 import org.inspirerobotics.sumobots.field.Field;
 
 import java.io.IOException;
@@ -23,7 +24,7 @@ public class WebServer extends NanoHTTPD {
     private final FieldRequestHandler fieldRequestHandler;
 
     public WebServer(Field field) {
-        super(8000);
+        super(Ports.FIELD_WEB);
 
         this.field = field;
         this.userResponseHandler = new UserRequestHandler();
@@ -51,7 +52,7 @@ public class WebServer extends NanoHTTPD {
             return handle(userResponseHandler, session);
         }
 
-        if(url.startsWith("/field")){
+        if(url.startsWith("/network")){
             return handle(fieldRequestHandler, session);
         }
 
@@ -63,7 +64,7 @@ public class WebServer extends NanoHTTPD {
     }
 
     private Response killServerRequest(IHTTPSession session) {
-        logger.info("Kill request received, killing field system.");
+        logger.info("Kill request received, killing network system.");
 
         field.stop();
         return null;

@@ -3,13 +3,15 @@ package org.inspirerobotics.sumobots.robot;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.inspirerobotics.sumobots.robot.api.RobotBase;
-import org.inspirerobotics.sumobots.robot.event.RobotEventQueue;
+import org.inspirerobotics.sumobots.robot.driverstation.Driverstation;
+import org.inspirerobotics.sumobots.robot.driverstation.DriverstationServer;
 import org.inspirerobotics.sumobots.robot.util.ExceptionHandlers;
 
 public class RobotManager {
 
     private static final Logger logger = LogManager.getLogger(RobotManager.class);
 
+    private final Thread driverstationServer = DriverstationServer.createAndRun();
     private final RobotContainer container;
     private final Thread robotThread;
 
@@ -32,15 +34,12 @@ public class RobotManager {
     }
 
     private void run() {
-        RobotEventQueue.add(robot -> {
-            logger.info("Running on robot thread!");
-        });
-
-        long endTime = System.currentTimeMillis() + 5000;
         running = true;
 
-        while (running && endTime > System.currentTimeMillis()){
+        while (running){
             checkRobotThread();
+
+            Driverstation.getInstance().update();
         }
 
         stop();
@@ -86,9 +85,11 @@ public class RobotManager {
 
     public static void manage(RobotBase robot){
         logger.info("Managing robot: " + robot.getClass().getName());
-        Thread.currentThread().setUncaughtExceptionHandler(ExceptionHandlers.mainThreadHandler());
+        Thread.currentThread().setUncaughtExceptionHandler(ExceptionHandlers.nonRobotHandler());
 
         RobotManager manager = new RobotManager(robot);
         manager.run();
+
+        throw new IllegalStateException("Robot manager should self terminate!");
     }
 }

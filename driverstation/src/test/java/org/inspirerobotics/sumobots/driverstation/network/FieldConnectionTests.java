@@ -1,4 +1,4 @@
-package org.inspirerobotics.sumobots.driverstation.field;
+package org.inspirerobotics.sumobots.driverstation.network;
 
 import org.inspirerobotics.sumobots.SumobotsRuntimeException;
 import org.junit.jupiter.api.Assertions;
@@ -10,11 +10,11 @@ import java.nio.channels.SocketChannel;
 
 public class FieldConnectionTests {
 
-    private FieldConnection connection;
+    private FieldConnectionHandler connection;
 
     @BeforeEach
     public void setupFieldConnection() throws IOException {
-        connection = new FieldConnection(SocketChannel.open());
+        connection = new FieldConnectionHandler(SocketChannel.open());
     }
 
     @Test
