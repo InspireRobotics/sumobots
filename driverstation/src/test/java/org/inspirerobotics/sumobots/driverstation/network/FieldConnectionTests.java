@@ -1,6 +1,8 @@
 package org.inspirerobotics.sumobots.driverstation.network;
 
+import org.inspirerobotics.sumobots.FmsComponent;
 import org.inspirerobotics.sumobots.SumobotsRuntimeException;
+import org.inspirerobotics.sumobots.packet.PacketPath;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,11 +12,12 @@ import java.nio.channels.SocketChannel;
 
 public class FieldConnectionTests {
 
-    private FieldConnectionHandler connection;
+    private Connection connection;
 
     @BeforeEach
     public void setupFieldConnection() throws IOException {
-        connection = new FieldConnectionHandler(SocketChannel.open());
+        PacketPath path = new PacketPath(FmsComponent.DRIVER_STATION, FmsComponent.FIELD_SERVER);
+        connection = Connection.create(SocketChannel.open(), path, packet -> {});
     }
 
     @Test
@@ -26,7 +29,7 @@ public class FieldConnectionTests {
 
     @Test
     void updateAfterCloseFailsTest() {
-        connection.getFieldConnection().close();
+        connection.close();
 
         Assertions.assertThrows(SumobotsRuntimeException.class,
                 () -> connection.update());

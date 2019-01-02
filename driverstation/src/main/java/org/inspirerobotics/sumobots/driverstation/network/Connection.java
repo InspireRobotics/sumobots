@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 import org.inspirerobotics.sumobots.FmsComponent;
 import org.inspirerobotics.sumobots.Ports;
 import org.inspirerobotics.sumobots.SumobotsRuntimeException;
+import org.inspirerobotics.sumobots.VisibleForTesting;
 import org.inspirerobotics.sumobots.packet.PacketPath;
 import org.inspirerobotics.sumobots.socket.SocketPipe;
 import org.inspirerobotics.sumobots.socket.SocketPipeListener;
@@ -51,7 +52,8 @@ public final class Connection {
                 .map(channel -> create(channel, path, new RobotConnectionHandler()));
     }
 
-    private static Connection create(SocketChannel channel, PacketPath path, SocketPipeListener listener){
+    @VisibleForTesting
+    static Connection create(SocketChannel channel, PacketPath path, SocketPipeListener listener){
         return new Connection(channel, path, listener);
     }
 }

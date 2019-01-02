@@ -78,7 +78,7 @@ class TestStateManager extends DriverstationStateManager{
     }
 
     @Override
-    protected void attemptToChangeComponentState(ComponentState componentState) {
+    public void attemptToChangeComponentState(ComponentState componentState) {
         DriverstationState newState = new DriverstationState(this.getCurrentState().getMode(), componentState);
 
         setCurrentState(newState);

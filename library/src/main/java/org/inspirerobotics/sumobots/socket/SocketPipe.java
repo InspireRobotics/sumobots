@@ -213,6 +213,9 @@ public class SocketPipe implements Closeable {
     }
 
     public boolean isClosed() {
+        if(socket.socket().isClosed())
+            close();
+
         return closed;
     }
 }

@@ -11,6 +11,16 @@ import java.nio.channels.SocketChannel;
 public class SocketPipeTests {
 
     @Test
+    void closedSocketClosesPipeTest() throws IOException{
+        PacketPath path = new PacketPath(FmsComponent.FIELD_SERVER, FmsComponent.DRIVER_STATION);
+        SocketChannel channel = SocketChannel.open();
+        SocketPipe pipe = new SocketPipe(channel, createPipeListener(), path);
+        channel.close();
+
+        Assertions.assertTrue(pipe.isClosed());
+    }
+
+    @Test
     void nullSocketConstructorFails() {
         Assertions.assertThrows(NullPointerException.class, () -> {
             PacketPath path = new PacketPath(FmsComponent.FIELD_SERVER, FmsComponent.DRIVER_STATION);

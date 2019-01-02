@@ -12,7 +12,7 @@ repositories {
 }
 
 test{
-    dependsOn(':network:test', ':driverstation:test', ':library:test', ":robot:test", ":robot:examples:test")
+    dependsOn(':field:test', ':driverstation:test', ':library:test', ":robot:test", ":robot:examples:test")
 
     testLogging {
         events "failed"

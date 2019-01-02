@@ -1,6 +1,7 @@
 package org.inspirerobotics.sumobots.robot.driverstation;
 
 import org.inspirerobotics.sumobots.ComponentState;
+import org.inspirerobotics.sumobots.VisibleForTesting;
 
 import java.util.Optional;
 
@@ -10,6 +11,10 @@ public class Driverstation {
 
     private Optional<DriverstationConnection> connection = Optional.empty();
     private ComponentState state = ComponentState.DISABLED;
+
+    @VisibleForTesting
+    Driverstation() {
+    }
 
     public void update(){
         connection.ifPresent(this::updateConnection);
@@ -48,6 +53,10 @@ public class Driverstation {
         }
     }
 
+    @VisibleForTesting
+    Optional<DriverstationConnection> getConnection() {
+        return connection;
+    }
 
     public static Driverstation getInstance() {
         if(instance == null){

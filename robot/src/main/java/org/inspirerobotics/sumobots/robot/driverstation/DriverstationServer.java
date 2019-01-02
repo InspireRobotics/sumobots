@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.inspirerobotics.sumobots.Ports;
 import org.inspirerobotics.sumobots.SumobotsRuntimeException;
+import org.inspirerobotics.sumobots.VisibleForTesting;
 import org.inspirerobotics.sumobots.robot.util.ExceptionHandlers;
 
 import java.io.IOException;
@@ -35,7 +36,8 @@ public class DriverstationServer implements Runnable{
         }
     }
 
-    private void handle(SocketChannel connection) throws IOException{
+    @VisibleForTesting
+    void handle(SocketChannel connection) throws IOException{
         if(Driverstation.getInstance().isConnected()){
             logger.warn("Connection attempted while already connected: " + connection.getRemoteAddress());
             connection.close();

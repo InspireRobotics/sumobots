@@ -2,6 +2,7 @@ package org.inspirerobotics.sumobots.robot;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.inspirerobotics.sumobots.VisibleForTesting;
 import org.inspirerobotics.sumobots.robot.api.RobotBase;
 import org.inspirerobotics.sumobots.robot.driverstation.Driverstation;
 import org.inspirerobotics.sumobots.robot.event.RobotEvent;
@@ -33,10 +34,12 @@ public class RobotContainer implements Runnable {
     private void runMainLoop() {
         while (running) {
             runRobotEvents();
+            updateRobot();
         }
     }
 
-    private void init() {
+    @VisibleForTesting
+    void init() {
         logger.debug("Initializing robot container!");
         robot.init();
     }
@@ -46,12 +49,11 @@ public class RobotContainer implements Runnable {
 
         while ((e = RobotEventQueue.poll()).isPresent() && running) {
             e.get().run(this);
-
-            updateRobot();
         }
     }
 
-    private void updateRobot() {
+    @VisibleForTesting
+    void updateRobot() {
         switch (Driverstation.getInstance().getState()) {
             case DISABLED:
                 robot.disablePeriodic();
@@ -64,7 +66,8 @@ public class RobotContainer implements Runnable {
         }
     }
 
-    private void onShutdown() {
+    @VisibleForTesting
+    void onShutdown() {
         logger.info("Shutting down robot!");
 
         robot.onShutdown();

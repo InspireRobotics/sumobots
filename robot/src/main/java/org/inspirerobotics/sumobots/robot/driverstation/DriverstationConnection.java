@@ -3,6 +3,7 @@ package org.inspirerobotics.sumobots.robot.driverstation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.inspirerobotics.sumobots.FmsComponent;
+import org.inspirerobotics.sumobots.VisibleForTesting;
 import org.inspirerobotics.sumobots.packet.Packet;
 import org.inspirerobotics.sumobots.packet.PacketPath;
 import org.inspirerobotics.sumobots.socket.SocketPipe;
@@ -28,6 +29,11 @@ public class DriverstationConnection implements SocketPipeListener {
     @Override
     public void onPacketReceived(Packet packet) {
         logger.debug("Received packet: " + packet);
+    }
+
+    @VisibleForTesting
+    SocketPipe getPipe() {
+        return pipe;
     }
 
     public boolean isClosed(){
