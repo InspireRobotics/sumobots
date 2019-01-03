@@ -3,10 +3,9 @@ package org.inspirerobotics.sumobots.socket;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.inspirerobotics.sumobots.SumobotsRuntimeException;
-import org.inspirerobotics.sumobots.packet.HeartbeatData;
-import org.inspirerobotics.sumobots.packet.Packet;
-import org.inspirerobotics.sumobots.packet.PacketFactory;
-import org.inspirerobotics.sumobots.packet.PacketPath;
+import org.inspirerobotics.sumobots.Version;
+import org.inspirerobotics.sumobots.VisibleForTesting;
+import org.inspirerobotics.sumobots.packet.*;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -41,6 +40,21 @@ public class SocketPipe implements Closeable {
         this.listener = listener;
         this.path = path;
 
+        setupSocket(socket);
+
+        sendVersionData();
+    }
+
+    private void sendVersionData() {
+        if(!socket.isConnected()){
+            logger.warn("Socket created before being connected!");
+            return;
+        }
+
+        sendPacket(PacketFactory.createVersion(path));
+    }
+
+    private void setupSocket(SocketChannel socket) {
         try{
             socket.configureBlocking(false);
         }catch (IOException e){
@@ -48,7 +62,6 @@ public class SocketPipe implements Closeable {
             logger.error("Closing socket pipe due to error!");
             close();
         }
-
     }
 
     public void update(){
@@ -68,10 +81,38 @@ public class SocketPipe implements Closeable {
     }
 
     private void handlePacketReceived(Packet packet) {
-        if(packet.getAction().equals(PacketFactory.HEARTBEAT)){
-            handleHeartbeatPacket(packet);
-        }else {
+        if(!handleInternalPacket(packet)){
             listener.onPacketReceived(packet);
+        }
+    }
+
+    private boolean handleInternalPacket(Packet packet) {
+        logger.trace("Received packet: {}", packet);
+
+        switch (packet.getAction()){
+            case PacketFactory.HEARTBEAT:
+                handleHeartbeatPacket(packet);
+                return true;
+            case PacketFactory.VERSION:
+                handleVersionPacket(packet);
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    @VisibleForTesting
+    void handleVersionPacket(Packet packet) {
+        VersionData data = (VersionData) packet.getDataAs(VersionData.class).get();
+
+        if(!Version.VERSION.equals(data.getVersion())){
+            logger.warn("{}", packet);
+            logger.warn("version doesn't match for socket: {}", this);
+            logger.warn("Local version = {}\tRemote Version = {}", Version.VERSION, data.getVersion());
+
+            close();
+        }else{
+            logger.debug("Versions match for socket: {}!", this);
         }
     }
 

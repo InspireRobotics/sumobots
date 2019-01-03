@@ -8,7 +8,6 @@ public class HeartbeatData {
         this.sentTime = System.currentTimeMillis();
     }
 
-
     public long getSentTime() {
         return sentTime;
     }

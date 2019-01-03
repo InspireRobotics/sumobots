@@ -1,5 +1,8 @@
 package org.inspirerobotics.sumobots;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 public class Version {
 
     /**
@@ -18,6 +21,14 @@ public class Version {
         MAJOR = numbers[0];
         MINOR = numbers[1];
         REVISION = numbers[2];
+    }
+
+    public static void printInfo(String compName){
+        Logger logger = LogManager.getLogger();
+        logger.info("----------------");
+        logger.info("Component: " + compName);
+        logger.info("Lib Version: " + VERSION);
+        logger.info("----------------");
     }
 
     public static int[] getVersionFromString(String input){

@@ -103,6 +103,7 @@ public class Gui extends Application implements Thread.UncaughtExceptionHandler 
     }
 
     public static void main(String[] args) {
+        Version.printInfo("Driverstation");
         launch(args);
     }
 

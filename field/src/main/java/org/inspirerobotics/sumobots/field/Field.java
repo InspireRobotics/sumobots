@@ -2,6 +2,7 @@ package org.inspirerobotics.sumobots.field;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.inspirerobotics.sumobots.Version;
 import org.inspirerobotics.sumobots.field.driverstation.DriverstationManager;
 import org.inspirerobotics.sumobots.field.driverstation.DriverstationThread;
 import org.inspirerobotics.sumobots.field.driverstation.DriverstationServer;
@@ -67,6 +68,7 @@ public class Field {
 
     public static void main(String[] args) {
         Thread.currentThread().setName("Main Thread");
+        Version.printInfo("Field");
         new Field();
     }
 

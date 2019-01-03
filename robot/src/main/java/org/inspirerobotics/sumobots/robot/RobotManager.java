@@ -2,6 +2,7 @@ package org.inspirerobotics.sumobots.robot;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.inspirerobotics.sumobots.Version;
 import org.inspirerobotics.sumobots.robot.api.RobotBase;
 import org.inspirerobotics.sumobots.robot.driverstation.Driverstation;
 import org.inspirerobotics.sumobots.robot.driverstation.DriverstationServer;
@@ -84,6 +85,7 @@ public class RobotManager {
     }
 
     public static void manage(RobotBase robot){
+        Version.printInfo("Robot Manager");
         logger.info("Managing robot: " + robot.getClass().getName());
         Thread.currentThread().setUncaughtExceptionHandler(ExceptionHandlers.nonRobotHandler());
 
