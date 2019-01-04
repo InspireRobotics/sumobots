@@ -6,6 +6,17 @@ function init() {
     }, 2500)
 }
 
+function onKillswitchSelected(ip){
+//send kill request to /stop with json containing ip to kill
+
+	var request = new XMLHttpRequest();
+	request.open('POST', '/stop', true);
+	request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+	request.send(JSON.stringify({'ip':ip}));
+	
+	alert("this is where we'd kill off " + ip);
+}
+
 function onDsInfoReceived(responseText){
     var connArray = JSON.parse(responseText);
     var tableHTML = "<tr><th>IP</th><th>Ping</th></tr>";
@@ -15,7 +26,8 @@ function onDsInfoReceived(responseText){
         var ip = conn.ip;
         var ping = conn.ping;
 
-        tableHTML += "<tr><th>" + ip + "</th><th>" + ping + " ms</th></tr>"
+        tableHTML += "<tr><th>" + ip + "</th><th>" + ping + " ms</th>";
+        tableHTML += "<th class='stop-container' onclick=\"onKillswitchSelected('" + ip + "')\"><button id='stop'>Stop</button></th></tr>";
     }
 
     document.getElementById("dsConnTable").innerHTML = tableHTML;

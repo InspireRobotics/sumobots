@@ -24,6 +24,10 @@ table.std-table th {
     color: black;
 }
 
+table.std-table th.stop-container {
+    background-color: #ff0000;
+    color: black;
+}
 .content-pane{
     max-width: 500px;
     padding-left: 100px;

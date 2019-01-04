@@ -52,7 +52,7 @@ public class WebServer extends NanoHTTPD {
             return handle(userResponseHandler, session);
         }
 
-        if(url.startsWith("/network")){
+        if(url.startsWith("/field")){
             return handle(fieldRequestHandler, session);
         }
 
