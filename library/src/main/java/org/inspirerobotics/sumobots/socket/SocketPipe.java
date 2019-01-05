@@ -7,7 +7,6 @@ import org.inspirerobotics.sumobots.Version;
 import org.inspirerobotics.sumobots.VisibleForTesting;
 import org.inspirerobotics.sumobots.packet.*;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
@@ -15,7 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.Optional;
 
-public class SocketPipe implements Closeable {
+public class SocketPipe {
 
     private static final Logger logger = LogManager.getLogger(SocketPipe.class);
     private static final int HEADER_SIZE = 4;
@@ -46,7 +45,7 @@ public class SocketPipe implements Closeable {
     }
 
     private void sendVersionData() {
-        if(!socket.isConnected()){
+        if(!socket.isConnected()) {
             logger.warn("Socket created before being connected!");
             return;
         }
@@ -55,33 +54,33 @@ public class SocketPipe implements Closeable {
     }
 
     private void setupSocket(SocketChannel socket) {
-        try{
+        try {
             socket.configureBlocking(false);
-        }catch (IOException e){
+        } catch(IOException e) {
             logger.error("Failed to disable blocking for socket pipe: " + e);
             logger.error("Closing socket pipe due to error!");
-            close();
+            close("Failed to setup socket pipe");
         }
     }
 
-    public void update(){
+    public void update() {
         if(closed)
             throw new IllegalStateException("Cannot update while closed!");
 
         updateHeartbeat();
 
-        try{
+        try {
             readFromSocket().ifPresent(this::handlePacketReceived);
-        }catch (IOException e){
+        } catch(IOException e) {
             logger.error("Failed while reading from socket pipe", e);
             logger.error("Closing socket pipe due to error!");
-            close();
+            close("Error occurred while reading");
         }
 
     }
 
     private void handlePacketReceived(Packet packet) {
-        if(!handleInternalPacket(packet)){
+        if(!handleInternalPacket(packet)) {
             listener.onPacketReceived(packet);
         }
     }
@@ -89,46 +88,53 @@ public class SocketPipe implements Closeable {
     private boolean handleInternalPacket(Packet packet) {
         logger.trace("Received packet: {}", packet);
 
-        switch (packet.getAction()){
+        switch(packet.getAction()) {
             case PacketFactory.HEARTBEAT:
                 handleHeartbeatPacket(packet);
                 return true;
             case PacketFactory.VERSION:
                 handleVersionPacket(packet);
                 return true;
+            case PacketFactory.CLOSE:
+                handleClosePacket(packet);
+                return true;
             default:
                 return false;
         }
+    }
+
+    private void handleClosePacket(Packet packet) {
+        CloseData data = (CloseData) packet.getDataAs(CloseData.class).get();
+
+        close("(Closed by remote) " +data.getReason());
     }
 
     @VisibleForTesting
     void handleVersionPacket(Packet packet) {
         VersionData data = (VersionData) packet.getDataAs(VersionData.class).get();
 
-        if(!Version.VERSION.equals(data.getVersion())){
+        if(!Version.VERSION.equals(data.getVersion())) {
             logger.warn("{}", packet);
             logger.warn("version doesn't match for socket: {}", this);
             logger.warn("Local version = {}\tRemote Version = {}", Version.VERSION, data.getVersion());
 
-            close();
-        }else{
+            close("Library versions do not match");
+        } else {
             logger.debug("Versions match for socket: {}!", this);
         }
     }
 
     private void updateHeartbeat() {
-        if(lastHeartbeatSentTime + 1000 < System.currentTimeMillis()){
+        if(lastHeartbeatSentTime + 1000 < System.currentTimeMillis()) {
             sendHeartbeat();
         }
 
-        if(lastHeartbeatReceivedTime == 0){
+        if(lastHeartbeatReceivedTime == 0) {
             lastHeartbeatReceivedTime = System.currentTimeMillis();
         }
 
-        if(lastHeartbeatReceivedTime + 5000 < System.currentTimeMillis()){
-            logger.info("Lost signal with connection: {}", this);
-            close();
-            return;
+        if(lastHeartbeatReceivedTime + 5000 < System.currentTimeMillis()) {
+            close("No heartbeat received in the last 5 seconds");
         }
     }
 
@@ -155,18 +161,18 @@ public class SocketPipe implements Closeable {
         ByteBuffer headerBuffer = ByteBuffer.allocate(HEADER_SIZE);
         int bytesRead = socket.read(headerBuffer);
 
-        if(bytesRead > 0){
+        if(bytesRead > 0) {
             String packetCharacters = readPacketAsUTF8(headerBuffer);
 
             return Optional.of(Packet.fromJSON(packetCharacters));
-        }else if(bytesRead < 0){
-            close();
+        } else if(bytesRead < 0) {
+            close("Error occured while reading");
         }
 
         return Optional.empty();
     }
 
-    private String readPacketAsUTF8(ByteBuffer headerBuffer) throws IOException{
+    private String readPacketAsUTF8(ByteBuffer headerBuffer) throws IOException {
         headerBuffer.flip();
 
         if(headerBuffer.remaining() < 4)
@@ -178,32 +184,32 @@ public class SocketPipe implements Closeable {
         return new String(packetBytes, StandardCharsets.UTF_8);
     }
 
-    private byte[] readPacketRawBytes(int messageLength) throws IOException{
+    private byte[] readPacketRawBytes(int messageLength) throws IOException {
         ByteBuffer buffer = ByteBuffer.allocate(messageLength);
         socket.read(buffer);
 
         return buffer.array();
     }
 
-    public void sendPacket(Packet packet){
+    public void sendPacket(Packet packet) {
         if(closed)
             throw new IllegalStateException("Cannot send packet while socket is closed!");
 
-        String characters  = packet.toJSON();
+        String characters = packet.toJSON();
         ByteBuffer buffer = createBufferFromBytes(toUTF8Bytes(characters));
         buffer.flip();
 
         logger.trace("{}: Sending packet: " + characters, this);
-        try{
+        try {
             socket.write(buffer);
-        }catch (IOException e){
+        } catch(IOException e) {
             logger.error("Failed while writing to socket pipe: " + e);
             logger.error("Closing socket pipe due to error!");
-            close();
+            close("Error while sending packet");
         }
     }
 
-    private ByteBuffer createBufferFromBytes(byte[] messageBytes){
+    private ByteBuffer createBufferFromBytes(byte[] messageBytes) {
         int messageLength = messageBytes.length;
         ByteBuffer buffer = ByteBuffer.allocate(HEADER_SIZE + messageLength);
         buffer.putInt(messageLength);
@@ -216,13 +222,25 @@ public class SocketPipe implements Closeable {
         return input.getBytes(StandardCharsets.UTF_8);
     }
 
-    @Override
-    public void close() {
-        try{
+    public void close(String reason) {
+        close(Optional.of(reason));
+    }
+
+    public void close(){
+        close(Optional.empty());
+    }
+
+    public void close(Optional<String> reason){
+        logger.info("Closing {}: {}", this, reason.orElse("No reason listed"));
+
+        try {
+            if(socket.socket().isConnected() && reason.isPresent())
+                sendPacket(PacketFactory.createClose(path, reason.get()));
+
             listener.onClose();
             socket.close();
             closed = true;
-        }catch (IOException e){
+        } catch(IOException e) {
             throw new SumobotsRuntimeException("Failed to close socket!", e);
         }
     }
@@ -232,9 +250,9 @@ public class SocketPipe implements Closeable {
         if(closed)
             return "SocketPipe[closed]";
 
-        try{
+        try {
             return String.format("SocketPipe[%s]", this.socket.getRemoteAddress());
-        }catch (IOException e){
+        } catch(IOException e) {
             e.printStackTrace();
         }
 
@@ -254,8 +272,8 @@ public class SocketPipe implements Closeable {
     }
 
     public boolean isClosed() {
-        if(socket.socket().isClosed())
-            close();
+        if(socket.socket().isClosed() && !closed)
+            close("Internal closed for unknown reason");
 
         return closed;
     }

@@ -21,7 +21,7 @@ public class Sockets {
             if(socket.socket().isConnected())
                 return Optional.of(socket);
         }catch (SocketTimeoutException e){
-            logger.trace("Socket timeout reached! ");
+            //Do not handle timeout
         }catch (IOException e){
             logger.error("Error occurred while trying to connect to network: " + e);
         }

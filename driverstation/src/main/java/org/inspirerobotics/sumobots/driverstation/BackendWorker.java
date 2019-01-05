@@ -58,6 +58,9 @@ public class BackendWorker implements Runnable{
 
     private Optional<Connection> updateConnection(Optional<Connection> connection, Supplier<Optional<Connection>> creator){
         if(connection.isPresent()){
+            if(connection.get().isClosed())
+                return Optional.empty();
+
             connection.get().update();
 
             return connection.filter(c -> !c.isClosed());
