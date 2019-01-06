@@ -31,9 +31,12 @@ public final class Connection {
         pipe.update();
     }
 
-    public void close() {
-        logger.info("Closing network connection: " + pipe.toString());
-        pipe.close();
+    public void close(String reason) {
+        pipe.close(reason);
+    }
+
+    public SocketPipe getPipe() {
+        return pipe;
     }
 
     public boolean isClosed(){

@@ -5,6 +5,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import org.inspirerobotics.sumobots.FmsComponent;
+import org.inspirerobotics.sumobots.SumobotsRuntimeException;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;
@@ -61,9 +62,12 @@ public class Packet {
         HashMap<String, JsonElement> map = gson.fromJson(input, mapType);
 
         String action =  map.get("action").getAsString();
+        Optional<JsonObject> path = Optional.ofNullable(map.get("path").getAsJsonObject());
+        PacketPath packetPath = path.map(data -> gson.fromJson(data, PacketPath.class))
+                .orElseThrow(SumobotsRuntimeException::new);
         Optional<JsonObject> data = Optional.ofNullable(map.get("data").getAsJsonObject());
 
-        return new Packet(action, new PacketPath(FmsComponent.FIELD_SERVER, FmsComponent.DRIVER_STATION), data);
+        return new Packet(action, packetPath, data);
     }
 
     public String toJSON() {

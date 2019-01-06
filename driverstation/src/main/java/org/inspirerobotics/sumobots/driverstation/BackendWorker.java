@@ -71,7 +71,8 @@ public class BackendWorker implements Runnable{
 
     private void shutdown() {
         logger.info("Shutting down backend thread!");
-        fieldConnection.ifPresent(Connection::close);
+        fieldConnection.ifPresent(conn -> conn.close("Driverstation closed"));
+        robotConnection.ifPresent(conn -> conn.close("Driverstation closed"));
         logger.info("Backend thread shutdown!");
     }
 

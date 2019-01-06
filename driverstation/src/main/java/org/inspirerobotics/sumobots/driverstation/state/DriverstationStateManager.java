@@ -4,8 +4,12 @@ import javafx.application.Platform;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.inspirerobotics.sumobots.ComponentState;
+import org.inspirerobotics.sumobots.FmsComponent;
 import org.inspirerobotics.sumobots.driverstation.BackendWorker;
 import org.inspirerobotics.sumobots.driverstation.Gui;
+import org.inspirerobotics.sumobots.packet.Packet;
+import org.inspirerobotics.sumobots.packet.PacketFactory;
+import org.inspirerobotics.sumobots.packet.PacketPath;
 
 import java.util.Objects;
 
@@ -31,9 +35,19 @@ public class DriverstationStateManager {
         logger.trace("New state: " + currentState);
 
         this.currentState = currentState;
+
+        sendStateToRobot();
         syncStateWithGui();
     }
 
+    private void sendStateToRobot() {
+        backend.getRobotConnection().ifPresent(conn -> {
+            PacketPath path = new PacketPath(FmsComponent.DRIVER_STATION, FmsComponent.ROBOT);
+            Packet packet = PacketFactory.createUpdate(path, currentState.getCurrentState());
+
+            conn.getPipe().sendPacket(packet);
+        });
+    }
 
     protected void syncStateWithGui() {
         logger.trace("Syncing state with GUI!");

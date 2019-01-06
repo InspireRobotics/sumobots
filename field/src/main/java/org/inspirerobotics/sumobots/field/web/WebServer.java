@@ -81,6 +81,6 @@ public class WebServer extends NanoHTTPD {
 
         logger.error("Error ({}): {}", status.getRequestStatus(), desc);
 
-        return newFixedLengthResponse(builder.toString());
+        return newFixedLengthResponse(status, NanoHTTPD.MIME_HTML, builder.toString());
     }
 }

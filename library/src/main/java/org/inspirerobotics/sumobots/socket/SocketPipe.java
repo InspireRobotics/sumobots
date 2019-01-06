@@ -106,7 +106,9 @@ public class SocketPipe {
     private void handleClosePacket(Packet packet) {
         CloseData data = (CloseData) packet.getDataAs(CloseData.class).get();
 
-        close("(Closed by remote) " +data.getReason());
+        logger.info("{} - Closed by remote: {}", this, data.getReason());
+
+        close(Optional.empty());
     }
 
     @VisibleForTesting
@@ -205,7 +207,7 @@ public class SocketPipe {
         } catch(IOException e) {
             logger.error("Failed while writing to socket pipe: " + e);
             logger.error("Closing socket pipe due to error!");
-            close("Error while sending packet");
+            close(Optional.empty());
         }
     }
 
@@ -231,11 +233,13 @@ public class SocketPipe {
     }
 
     public void close(Optional<String> reason){
-        logger.info("Closing {}: {}", this, reason.orElse("No reason listed"));
-
         try {
-            if(socket.socket().isConnected() && reason.isPresent())
+            if(socket.socket().isConnected() && reason.isPresent()){
+                logger.info("Closing {}: {}", this, reason.get());
                 sendPacket(PacketFactory.createClose(path, reason.get()));
+            }else{
+                logger.info("Closing {}", this);
+            }
 
             listener.onClose();
             socket.close();

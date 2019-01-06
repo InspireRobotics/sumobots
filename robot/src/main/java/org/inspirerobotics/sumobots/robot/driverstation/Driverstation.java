@@ -1,5 +1,7 @@
 package org.inspirerobotics.sumobots.robot.driverstation;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.inspirerobotics.sumobots.ComponentState;
 import org.inspirerobotics.sumobots.VisibleForTesting;
 
@@ -8,6 +10,7 @@ import java.util.Optional;
 public class Driverstation {
 
     private static final Driverstation instance = new Driverstation();
+    private static final Logger logger = LogManager.getLogger(Driverstation.class);
 
     private Optional<DriverstationConnection> connection = Optional.empty();
     private ComponentState state = ComponentState.DISABLED;
@@ -43,6 +46,7 @@ public class Driverstation {
 
     void setState(ComponentState state) {
         synchronized (this.state){
+            logger.info("New state: {}", state);
             this.state = state;
         }
     }

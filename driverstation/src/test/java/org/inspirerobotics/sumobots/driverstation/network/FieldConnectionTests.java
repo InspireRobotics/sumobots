@@ -22,14 +22,14 @@ public class FieldConnectionTests {
 
     @Test
     void basicCloseTest() {
-        connection.close();
+        connection.close("");
 
         Assertions.assertTrue(connection.isClosed());
     }
 
     @Test
     void updateAfterCloseFailsTest() {
-        connection.close();
+        connection.close("");
 
         Assertions.assertThrows(SumobotsRuntimeException.class,
                 () -> connection.update());
