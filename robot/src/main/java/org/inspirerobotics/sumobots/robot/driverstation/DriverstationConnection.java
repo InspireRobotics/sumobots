@@ -17,11 +17,11 @@ import java.nio.channels.SocketChannel;
 public class DriverstationConnection implements SocketPipeListener {
 
     private static final Logger logger = LogManager.getLogger(DriverstationConnection.class);
+    private static final PacketPath path = new PacketPath(FmsComponent.ROBOT, FmsComponent.DRIVER_STATION);
     private final SocketPipe pipe;
 
     public DriverstationConnection(SocketChannel connection) {
-        this.pipe = new SocketPipe(connection, this,
-                new PacketPath(FmsComponent.ROBOT, FmsComponent.DRIVER_STATION));
+        this.pipe = new SocketPipe(connection, this, path);
     }
 
     public void updateConnection() {
@@ -41,6 +41,14 @@ public class DriverstationConnection implements SocketPipeListener {
         UpdateStateData data = (UpdateStateData) packet.getDataAs(UpdateStateData.class).get();
 
         Driverstation.getInstance().setState(data.getNewState());
+    }
+
+
+    public void sendLog(String message) {
+        if(pipe.isClosed())
+            return;
+        
+        pipe.sendPacket(PacketFactory.createLog(path, message));
     }
 
     @VisibleForTesting

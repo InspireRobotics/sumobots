@@ -12,14 +12,17 @@ public class RootPane extends AnchorPane {
     private final BorderPane borderPane;
     private final StatusPane statusPane;
     private final SettingsMenu settingsMenu;
+    private final LogPane logPane;
 
     public RootPane() {
         this.borderPane = new BorderPane();
         this.statusPane = new StatusPane();
         this.settingsMenu = new SettingsMenu();
+        this.logPane = new LogPane();
 
         borderPane.setBottom(statusPane);
         borderPane.setTop(settingsMenu);
+        borderPane.setCenter(logPane);
 
         GuiUtils.anchorInAnchorPane(borderPane);
 
@@ -46,5 +49,9 @@ public class RootPane extends AnchorPane {
 
     StatusPane getStatusPane() {
         return statusPane;
+    }
+
+    public LogPane getLogPane() {
+        return logPane;
     }
 }

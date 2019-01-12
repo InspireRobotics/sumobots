@@ -33,7 +33,6 @@ public class Gui extends Application implements Thread.UncaughtExceptionHandler 
         backendThread.setName("Backend Thread");
         backendThread.setDaemon(false);
         backendThread.setUncaughtExceptionHandler(this);
-        backendThread.start();
     }
 
     @Override
@@ -46,6 +45,7 @@ public class Gui extends Application implements Thread.UncaughtExceptionHandler 
         initStage();
         initScene();
 
+        backendThread.start();
         stage.show();
         logger.info("Showing Gui!");
     }
@@ -112,5 +112,17 @@ public class Gui extends Application implements Thread.UncaughtExceptionHandler 
             stage.setTitle("Driverstation: " + newState.getCurrentState());
             rootPane.onStateUpdated(newState);
         }
+    }
+
+    public void log(String text){
+        getRootPane().getLogPane().appendLog(text);
+    }
+
+    public void clearLog() {
+        getRootPane().getLogPane().reset();
+    }
+
+    public RootPane getRootPane() {
+        return rootPane;
     }
 }

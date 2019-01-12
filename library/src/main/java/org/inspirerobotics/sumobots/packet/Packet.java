@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
-import org.inspirerobotics.sumobots.FmsComponent;
 import org.inspirerobotics.sumobots.SumobotsRuntimeException;
 
 import java.lang.reflect.Type;
@@ -32,19 +31,6 @@ public class Packet {
         this.data = data;
         this.action = action;
         this.path = path;
-    }
-
-    public static Packet create(String action, FmsComponent src, FmsComponent dest) {
-        return new Packet(action, new PacketPath(src, dest), Optional.empty());
-    }
-
-    public static Packet create(String action, FmsComponent src, FmsComponent dest, Optional<Object> value) {
-        Optional<JsonObject> element = value.map(Packet::dataToJsonObject);
-        return new Packet(action, new PacketPath(src, dest), element);
-    }
-
-    public static Packet create(String action, PacketPath path) {
-        return new Packet(action, path, Optional.empty());
     }
 
     public static Packet create(String action, PacketPath path, Optional<Object> value) {

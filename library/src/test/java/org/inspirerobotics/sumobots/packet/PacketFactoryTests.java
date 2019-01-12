@@ -44,6 +44,14 @@ public class PacketFactoryTests {
     }
 
     @Test
+    void updatePacketActionTest(){
+        PacketPath path = new PacketPath(FmsComponent.FIELD_SERVER, FmsComponent.DRIVER_STATION);
+        Packet packet = PacketFactory.createUpdate(path, null);
+
+        Assertions.assertEquals("update", packet.getAction());
+    }
+
+    @Test
     void closeDataTest(){
         PacketPath path = new PacketPath(FmsComponent.FIELD_SERVER, FmsComponent.DRIVER_STATION);
         Packet packet = PacketFactory.createClose(path, "FooBarBaz1234");
@@ -51,5 +59,31 @@ public class PacketFactoryTests {
         CloseData data = (CloseData) packet.getDataAs(CloseData.class).get();
 
         Assertions.assertEquals("FooBarBaz1234", data.getReason());
+    }
+
+    @Test
+    void closePacketActionTest(){
+        PacketPath path = new PacketPath(FmsComponent.FIELD_SERVER, FmsComponent.DRIVER_STATION);
+        Packet packet = PacketFactory.createClose(path, "");
+
+        Assertions.assertEquals("close", packet.getAction());
+    }
+
+    @Test
+    void logDataMessageTest(){
+        PacketPath path = new PacketPath(FmsComponent.FIELD_SERVER, FmsComponent.DRIVER_STATION);
+        Packet packet = PacketFactory.createLog(path, "LionZebra");
+
+        LogData data = (LogData) packet.getDataAs(LogData.class).get();
+
+        Assertions.assertEquals("LionZebra", data.getLine());
+    }
+
+    @Test
+    void logPacketActionTest(){
+        PacketPath path = new PacketPath(FmsComponent.FIELD_SERVER, FmsComponent.DRIVER_STATION);
+        Packet packet = PacketFactory.createLog(path, "");
+
+        Assertions.assertEquals("log", packet.getAction());
     }
 }

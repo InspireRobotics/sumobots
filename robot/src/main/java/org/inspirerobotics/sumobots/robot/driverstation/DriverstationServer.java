@@ -42,8 +42,9 @@ public class DriverstationServer implements Runnable{
             logger.warn("Connection attempted while already connected: " + connection.getRemoteAddress());
             connection.close();
         }else{
-            logger.info("Connected: " + connection.getRemoteAddress());
             Driverstation.getInstance().setConnection(Optional.of(new DriverstationConnection(connection)));
+
+            logger.info("Connected to driverstation: " + connection.getRemoteAddress());
         }
     }
 

@@ -46,7 +46,7 @@ public class Driverstation {
 
     void setState(ComponentState state) {
         synchronized (this.state){
-            logger.info("New state: {}", state);
+            Driverstation.reportInfo("New State: " + state);
             this.state = state;
         }
     }
@@ -55,6 +55,28 @@ public class Driverstation {
         synchronized (state){
             return state;
         }
+    }
+
+    public static void reportError(String message){
+        sendLog(report("ERROR", message));
+    }
+    public static void reportWarning(String message){
+        sendLog(report("WARN", message));
+    }
+    public static void reportInfo(String message){
+        sendLog(report("INFO", message));
+    }
+
+    private static void sendLog(String message){
+        getInstance().getConnection().ifPresent(conn -> {
+            if(conn.getPipe().getSocket().isConnected()){
+                conn.sendLog(message);
+            }
+        });
+    }
+
+    static String report(String type, String desc){
+        return "[" + type + "] " + desc;
     }
 
     @VisibleForTesting

@@ -1,0 +1,13 @@
+#logText{
+    -fx-font-family: Consolas;
+    -fx-font-size: 15;
+    -fx-text-fill: #000000;
+    -fx-display-caret:true;
+}
+
+#logText .content {
+    -fx-background-color: rgb(230, 230, 230) ;
+}
+
+#logPane{
+}

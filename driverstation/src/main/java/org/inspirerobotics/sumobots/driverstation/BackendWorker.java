@@ -43,8 +43,8 @@ public class BackendWorker implements Runnable{
         while (running){
             runEventsFromEventQueue();
 
-            setFieldConnection(updateConnection(fieldConnection, Connection::createForField));
-            setRobotConnection(updateConnection(robotConnection, Connection::createForRobot));
+            setFieldConnection(updateConnection(fieldConnection, () -> Connection.createForField()));
+            setRobotConnection(updateConnection(robotConnection, () -> Connection.createForRobot(gui)));
         }
     }
 
@@ -94,10 +94,20 @@ public class BackendWorker implements Runnable{
         if(robotConnection != this.robotConnection){
             this.robotConnection = robotConnection;
             stateManager.attemptToChangeComponentState(ComponentState.DISABLED);
+            updateLogBasedOnConnection(robotConnection);
+
             return;
         }
 
         this.robotConnection = robotConnection;
+    }
+
+    private void updateLogBasedOnConnection(Optional<Connection> robotConnection) {
+        if(robotConnection.isPresent()){
+            gui.clearLog();
+        }else{
+            gui.log("-------------- \n\n ROBOT CONNECTION LOST!");
+        }
     }
 
     public Optional<Connection> getRobotConnection() {

@@ -6,6 +6,7 @@ import org.inspirerobotics.sumobots.FmsComponent;
 import org.inspirerobotics.sumobots.Ports;
 import org.inspirerobotics.sumobots.SumobotsRuntimeException;
 import org.inspirerobotics.sumobots.VisibleForTesting;
+import org.inspirerobotics.sumobots.driverstation.Gui;
 import org.inspirerobotics.sumobots.packet.PacketPath;
 import org.inspirerobotics.sumobots.socket.SocketPipe;
 import org.inspirerobotics.sumobots.socket.SocketPipeListener;
@@ -49,10 +50,10 @@ public final class Connection {
                 .map(channel -> create(channel, path, new FieldConnectionHandler()));
     }
 
-    public static Optional<Connection> createForRobot(){
+    public static Optional<Connection> createForRobot(Gui gui){
         PacketPath path = new PacketPath(FmsComponent.DRIVER_STATION, FmsComponent.ROBOT);
         return Sockets.create(Ports.ROBOT, 1)
-                .map(channel -> create(channel, path, new RobotConnectionHandler()));
+                .map(channel -> create(channel, path, new RobotConnectionHandler(gui)));
     }
 
     @VisibleForTesting
