@@ -2,6 +2,7 @@ package org.inspirerobotics.sumobots.driverstation;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -52,6 +53,7 @@ public class Gui extends Application implements Thread.UncaughtExceptionHandler 
 
     private void initStage() {
         stage.setTitle("Driverstation: " + Version.VERSION);
+        stage.getIcons().add(new Image("icon.png"));
         stage.setOnCloseRequest(event -> {
             logger.info("User closed window!");
             stage.hide();
