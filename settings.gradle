@@ -4,3 +4,5 @@ include 'library'
 include 'field'
 include 'robot'
 include 'robot:examples'
+include 'rms'
+
