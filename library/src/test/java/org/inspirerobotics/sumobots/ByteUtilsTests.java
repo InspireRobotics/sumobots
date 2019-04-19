@@ -1,4 +1,4 @@
-package org.inspirerobotics.sumobots.rms;
+package org.inspirerobotics.sumobots;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;

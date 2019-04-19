@@ -1,4 +1,4 @@
-package org.inspirerobotics.sumobots.rms;
+package org.inspirerobotics.sumobots;
 
 import java.nio.ByteBuffer;
 
