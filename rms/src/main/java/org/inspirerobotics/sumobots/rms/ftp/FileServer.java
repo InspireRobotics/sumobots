@@ -52,10 +52,15 @@ public class FileServer {
 
             deleteOld(codeDir);
             createDirectory(codeDir);
+            saveNewRobotCode(socket);
             logger.info("Successfully installed robot code!");
         }catch(SumobotsRuntimeException e){
             logger.warn("Failed to install robot code: " + e.getMessage());
         }
+    }
+
+    private void saveNewRobotCode(Socket socket) {
+
     }
 
     private void createDirectory(File codeDir) {
