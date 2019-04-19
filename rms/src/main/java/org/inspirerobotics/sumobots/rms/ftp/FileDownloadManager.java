@@ -35,7 +35,7 @@ public class FileDownloadManager {
         while(transferPacket(fileOutputStream, inputStream)) { }
     }
 
-    private static boolean transferPacket(OutputStream fileOutputStream, InputStream inputStream) throws IOException {
+    static boolean transferPacket(OutputStream fileOutputStream, InputStream inputStream) throws IOException {
         byte[] packetSizeData = new byte[4];
 
         if(inputStream.read(packetSizeData) != 4)

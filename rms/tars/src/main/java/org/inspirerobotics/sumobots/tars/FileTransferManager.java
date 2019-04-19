@@ -31,7 +31,7 @@ public class FileTransferManager {
         }
     }
 
-    private boolean transferData() throws IOException {
+    boolean transferData() throws IOException {
         byte[] bytes = new byte[1024];
 
         int bytesRead = fileInputStream.read(bytes, 0, 1024);
