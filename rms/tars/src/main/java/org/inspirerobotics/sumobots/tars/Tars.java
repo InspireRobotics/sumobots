@@ -33,8 +33,8 @@ public class Tars {
 
         FileTransferManager fileTransferManager = new FileTransferManager(connection.getOutputStream(), fileStream);
         fileTransferManager.transfer();
+        connection.shutdown();
         closeStreams(connection, fileStream);
-
     }
 
     private void closeStreams(RobotServerConnection connection, InputStream fileStream)  {

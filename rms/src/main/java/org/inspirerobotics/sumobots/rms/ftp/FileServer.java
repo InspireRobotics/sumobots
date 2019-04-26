@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.Optional;
 
 public class FileServer {
@@ -24,28 +25,24 @@ public class FileServer {
         this.serverSocket = createServerSocket();
     }
 
-    public void run(){
-        while(!Thread.interrupted()){
-            currentConnection = getConnection();
-            currentConnection.ifPresent(this::transferFile);
-        }
-    }
-
-    private Optional<Socket> getConnection() {
+    public Optional<Socket> getConnection() {
         try {
+            serverSocket.setSoTimeout(5);
             Socket socket = serverSocket.accept();
 
             logger.info("Accepted Socket: {}", socket.getRemoteSocketAddress());
 
             return Optional.of(socket);
-        } catch(IOException e) {
+        } catch(SocketTimeoutException e){
+            // Do nothing if there are no requests
+        }catch(IOException e) {
             logger.info("Error while accepting socket: {}", e);
         }
 
         return Optional.empty();
     }
 
-    private void transferFile(Socket socket) {
+    public void transferFile(Socket socket) {
         try{
             logger.info("Beginning to install robot code!");
             File codeDir = new File(FileUtils.rootDirectoryPath() + "/robot-code/");
@@ -56,6 +53,7 @@ public class FileServer {
             logger.info("Successfully installed robot code!");
         }catch(SumobotsRuntimeException e){
             logger.warn("Failed to install robot code: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 

@@ -25,18 +25,20 @@ public class FileTransferManager {
         logger.info("Transferring file!");
 
         try {
-            while(!transferData()){ }
+            while(transferData()){ }
         } catch(IOException e) {
             throw new SumobotsRuntimeException("I/O failure while transferring file!", e);
         }
+        logger.info("Finished sending robot code!");
     }
 
     boolean transferData() throws IOException {
         byte[] bytes = new byte[1024];
 
-        int bytesRead = fileInputStream.read(bytes, 0, 1024);
+        int bytesRead = readArrayFromInputStream(bytes);
 
         if(bytesRead == -1){
+            socketOutputStream.write(ByteUtils.intToBytes(Integer.MAX_VALUE));
             return false;
         }
 
@@ -44,7 +46,26 @@ public class FileTransferManager {
 
         socketOutputStream.write(dataSize);
         socketOutputStream.write(bytes, 0, bytesRead);
+        socketOutputStream.flush();
 
         return true;
+    }
+
+    private int readArrayFromInputStream(byte[] packetData) throws IOException {
+        int bytesRead = 0;
+
+        while(bytesRead < packetData.length && bytesRead >= 0){
+            int tempBytesRead = fileInputStream.read(packetData, bytesRead, packetData.length - bytesRead);
+
+            if(tempBytesRead == -1 && bytesRead == 0)
+                return -1;
+
+            if(tempBytesRead == -1)
+                break;
+
+            bytesRead += tempBytesRead;
+        }
+
+        return bytesRead;
     }
 }

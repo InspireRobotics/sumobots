@@ -31,6 +31,18 @@ public class RobotServerConnection {
         }
     }
 
+    public void shutdown() {
+        try {
+            connection.getOutputStream().flush();
+            connection.shutdownOutput();
+        } catch(IOException e) {
+            throw new SumobotsRuntimeException("Failed to shutdown output!", e);
+        }
+
+        close();
+        return;
+    }
+
     public void close() {
         try {
             connection.close();

@@ -19,12 +19,4 @@ public class FileDownloadManagerTests {
 
         Assertions.assertArrayEquals(new byte[]{-5, 123, 0, 66, 23}, outputStream.toByteArray());
     }
-
-    @Test
-    void readPacketLessThan4SizeBytesReturnsFalseTest() throws IOException{
-        byte[] fileData = new byte[]{3, 14, 127};
-        ByteArrayInputStream inputStream = new ByteArrayInputStream(fileData);
-
-        Assertions.assertFalse(FileDownloadManager.transferPacket(null, inputStream));
-    }
 }

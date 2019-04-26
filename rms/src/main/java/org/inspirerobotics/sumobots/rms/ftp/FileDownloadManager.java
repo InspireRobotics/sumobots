@@ -21,6 +21,7 @@ public class FileDownloadManager {
 
             saveData(socket, fileOutputStream);
             fileOutputStream.close();
+            socket.close();
         } catch(IOException e) {
             throw new SumobotsRuntimeException("I/O Error while downloading code!", e);
         }
@@ -30,26 +31,41 @@ public class FileDownloadManager {
 
     private static void saveData(Socket socket, OutputStream fileOutputStream) throws IOException {
         InputStream inputStream = socket.getInputStream();
-        socket.setSoTimeout(2500);
+        socket.setSoTimeout(5000);
 
         while(transferPacket(fileOutputStream, inputStream)) { }
     }
 
     static boolean transferPacket(OutputStream fileOutputStream, InputStream inputStream) throws IOException {
         byte[] packetSizeData = new byte[4];
-
-        if(inputStream.read(packetSizeData) != 4)
-            return false;
+        readArrayFromInputStream(inputStream, packetSizeData);
 
         int packetSize = ByteUtils.bytesToInt(packetSizeData);
+
+        if(packetSize == Integer.MAX_VALUE || packetSize < 0){
+            logger.info("Reached end of data: " + packetSize);
+            return false;
+        }
+
         byte[] packetData = new byte[packetSize];
 
-        if(inputStream.read(packetData) != packetSize)
-            return false;
-
+        readArrayFromInputStream(inputStream, packetData);
         fileOutputStream.write(packetData);
+        fileOutputStream.flush();
+
+
 
         return true;
+    }
+
+    private static void readArrayFromInputStream(InputStream inputStream, byte[] packetData) throws IOException {
+        int bytesRead = 0;
+
+        while(bytesRead < packetData.length && bytesRead >= 0){
+             int tempBytesRead = inputStream.read(packetData, bytesRead, packetData.length - bytesRead);
+
+            bytesRead += tempBytesRead;
+        }
     }
 
     private static OutputStream createFileOutputStream(File robotJar) throws IOException {
