@@ -1,11 +1,19 @@
 plugins {
     id 'java'
+    id 'application'
 }
 
+mainClassName = "org.inspirerobotics.sumobots.tars.Tars"
 sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
+}
+
+run {
+    if (project.hasProperty('robotPath')) {
+        args findProperty('robotPath')
+    }
 }
 
 dependencies {

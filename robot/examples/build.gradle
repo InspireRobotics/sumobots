@@ -32,6 +32,10 @@ jar {
     }
 }
 
+task robotDeploy(type: Exec){
+    commandLine("$projectDir/robotDeploy.bat", "$projectDir\\build\\libs\\examples-${version}.jar")
+}
+
 test {
     useJUnitPlatform()
 
