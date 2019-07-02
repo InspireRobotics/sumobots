@@ -2,6 +2,7 @@ package org.inspirerobotics.sumobots.robot;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.inspirerobotics.sumobots.ComponentState;
 import org.inspirerobotics.sumobots.VisibleForTesting;
 import org.inspirerobotics.sumobots.robot.api.RobotBase;
 import org.inspirerobotics.sumobots.robot.driverstation.Driverstation;
@@ -49,6 +50,18 @@ public class RobotContainer implements Runnable {
 
         while ((e = RobotEventQueue.poll()).isPresent() && running) {
             e.get().run(this);
+        }
+    }
+
+    public void onStateChange(ComponentState state) {
+        switch(state){
+            case ENABLED:
+                robot.onEnable();
+                break;
+            case DISABLED:
+                robot.onDisable();
+                break;
+            default:
         }
     }
 

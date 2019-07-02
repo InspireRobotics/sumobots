@@ -4,6 +4,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.inspirerobotics.sumobots.ComponentState;
 import org.inspirerobotics.sumobots.VisibleForTesting;
+import org.inspirerobotics.sumobots.robot.event.RobotEventQueue;
+import org.inspirerobotics.sumobots.robot.event.StateChangeEvent;
 
 import java.util.Optional;
 
@@ -46,9 +48,11 @@ public class Driverstation {
 
     void setState(ComponentState state) {
         synchronized (this.state){
-            Driverstation.reportInfo("New State: " + state);
             this.state = state;
         }
+
+        Driverstation.reportInfo("New State: " + state);
+        RobotEventQueue.add(new StateChangeEvent(state));
     }
 
     public ComponentState getState() {

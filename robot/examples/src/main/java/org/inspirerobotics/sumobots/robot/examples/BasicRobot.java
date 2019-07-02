@@ -15,12 +15,12 @@ public class BasicRobot implements RobotBase {
 
     @Override
     public void onEnable() {
-        logger.info("Enable!");
+        logger.info("Robot has been enabled!");
     }
 
     @Override
     public void onDisable() {
-        logger.info("Disable!");
+        logger.info("Robot has been disabled!");
     }
 
     @Override
