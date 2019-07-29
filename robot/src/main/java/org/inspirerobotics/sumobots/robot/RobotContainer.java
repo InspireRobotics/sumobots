@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.inspirerobotics.sumobots.ComponentState;
 import org.inspirerobotics.sumobots.VisibleForTesting;
+import org.inspirerobotics.sumobots.robot.api.HardwareBackend;
 import org.inspirerobotics.sumobots.robot.api.RobotBase;
 import org.inspirerobotics.sumobots.robot.driverstation.Driverstation;
 import org.inspirerobotics.sumobots.robot.event.RobotEvent;
@@ -15,11 +16,13 @@ public class RobotContainer implements Runnable {
 
     private static final Logger logger = LogManager.getLogger(RobotContainer.class);
     private final RobotBase robot;
+    private final HardwareBackend hardwareBackend;
 
     private volatile boolean running;
 
-    public RobotContainer(RobotBase base) {
+    public RobotContainer(RobotBase base, HardwareBackend backend) {
         this.robot = base;
+        hardwareBackend = backend;
     }
 
     @Override
@@ -43,6 +46,7 @@ public class RobotContainer implements Runnable {
     void init() {
         logger.debug("Initializing robot container!");
         robot.init();
+        hardwareBackend.init();
     }
 
     private void runRobotEvents() {
@@ -84,10 +88,15 @@ public class RobotContainer implements Runnable {
         logger.info("Shutting down robot!");
 
         robot.onShutdown();
+        hardwareBackend.shutdown();
     }
 
     void stop() {
         logger.info("Stopping robot container!");
         running = false;
+    }
+
+    protected HardwareBackend getHardwareBackend() {
+        return hardwareBackend;
     }
 }

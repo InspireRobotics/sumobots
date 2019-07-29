@@ -1,21 +1,25 @@
 package org.inspirerobotics.sumobots.robot;
 
 import org.inspirerobotics.sumobots.ComponentState;
+import org.inspirerobotics.sumobots.robot.api.MockHardware;
 import org.inspirerobotics.sumobots.robot.api.RobotBase;
 import org.inspirerobotics.sumobots.robot.driverstation.DriverstationTests;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class RobotContainerTests {
 
+    private MockHardware mockHardware;
     private RobotContainer container;
     private TestRobot robot;
 
     @BeforeEach
     void setUp() {
         robot = new TestRobot();
-        container = new RobotContainer(robot);
+        mockHardware = new MockHardware();
+        container = new RobotContainer(robot, mockHardware);
     }
 
     @Test
@@ -52,6 +56,22 @@ public class RobotContainerTests {
         }
 
         Assertions.assertEquals(5, robot.disableCount);
+    }
+
+    @Test
+    void shutdownHardwareBackendOnRobotShutdown() {
+        container.onShutdown();
+
+        Assertions.assertTrue(mockHardware.isShutdown());
+    }
+
+    @Test
+    void hardwareInitializedOnRobotInitialisation() {
+        Assumptions.assumeFalse(mockHardware.isInitalized());
+
+        container.init();
+
+        Assertions.assertTrue(mockHardware.isInitalized());
     }
 }
 class TestRobot implements RobotBase{

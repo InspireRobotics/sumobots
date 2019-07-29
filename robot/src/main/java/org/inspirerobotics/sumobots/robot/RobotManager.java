@@ -3,6 +3,7 @@ package org.inspirerobotics.sumobots.robot;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.inspirerobotics.sumobots.Version;
+import org.inspirerobotics.sumobots.robot.api.HardwareBackend;
 import org.inspirerobotics.sumobots.robot.api.RobotBase;
 import org.inspirerobotics.sumobots.robot.driverstation.Driverstation;
 import org.inspirerobotics.sumobots.robot.driverstation.DriverstationServer;
@@ -19,8 +20,8 @@ public class RobotManager {
 
     private boolean running;
 
-    public RobotManager(RobotBase robot) {
-        this.container = new RobotContainer(robot);
+    public RobotManager(RobotBase robot, HardwareBackend backend) {
+        this.container = new RobotContainer(robot, backend);
         this.robotThread = createThread(container);
 
         this.robotThread.start();
@@ -85,13 +86,16 @@ public class RobotManager {
         }
     }
 
-    public static void manage(RobotBase robot){
+    public static void manage(RobotBase robot, HardwareBackend backend){
         RobotLog.init();
         Version.printInfo("Robot Manager");
-        logger.info("Managing robot: " + robot.getClass().getName());
         Thread.currentThread().setUncaughtExceptionHandler(ExceptionHandlers.nonRobotHandler());
 
-        RobotManager manager = new RobotManager(robot);
+        logger.info("Managing robot: " + robot.getClass().getName());
+        logger.info("Hardware Platform: " + backend.getName());
+
+        RobotManager manager = new RobotManager(robot, backend);
+
         manager.run();
 
         throw new IllegalStateException("Robot manager should self terminate!");
