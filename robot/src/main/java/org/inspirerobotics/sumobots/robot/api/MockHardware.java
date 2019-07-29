@@ -2,16 +2,16 @@ package org.inspirerobotics.sumobots.robot.api;
 
 public class MockHardware implements HardwareBackend {
 
-    private boolean initalized;
+    private boolean initialized;
     private boolean shutdown;
 
     @Override
     public void init() {
-        initalized = true;
+        initialized = true;
     }
 
     @Override
-    public void createPWM(int pin, int value) {
+    public void createPWM(int pin, int value, int range) {
 
     }
 
@@ -29,8 +29,8 @@ public class MockHardware implements HardwareBackend {
         return shutdown;
     }
 
-    public boolean isInitalized() {
-        return initalized;
+    public boolean isInitialized() {
+        return initialized;
     }
 
     @Override

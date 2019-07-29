@@ -1,6 +1,7 @@
 package org.inspirerobotics.sumobots.robot;
 
 import org.inspirerobotics.sumobots.ComponentState;
+import org.inspirerobotics.sumobots.robot.api.HardwareBackend;
 import org.inspirerobotics.sumobots.robot.api.MockHardware;
 import org.inspirerobotics.sumobots.robot.api.RobotBase;
 import org.inspirerobotics.sumobots.robot.driverstation.DriverstationTests;
@@ -67,11 +68,11 @@ public class RobotContainerTests {
 
     @Test
     void hardwareInitializedOnRobotInitialisation() {
-        Assumptions.assumeFalse(mockHardware.isInitalized());
+        Assumptions.assumeFalse(mockHardware.isInitialized());
 
         container.init();
 
-        Assertions.assertTrue(mockHardware.isInitalized());
+        Assertions.assertTrue(mockHardware.isInitialized());
     }
 }
 class TestRobot implements RobotBase{
@@ -83,7 +84,7 @@ class TestRobot implements RobotBase{
     int disableCount = 0;
 
     @Override
-    public void init() {
+    public void init(HardwareBackend backend) {
         init = true;
     }
 

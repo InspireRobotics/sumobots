@@ -2,7 +2,7 @@ package org.inspirerobotics.sumobots.robot.api;
 
 public interface RobotBase {
 
-    void init();
+    void init(HardwareBackend backend);
 
     default void onEnable(){};
 

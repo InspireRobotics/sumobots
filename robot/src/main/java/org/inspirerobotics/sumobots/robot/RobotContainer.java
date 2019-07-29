@@ -45,8 +45,8 @@ public class RobotContainer implements Runnable {
     @VisibleForTesting
     void init() {
         logger.debug("Initializing robot container!");
-        robot.init();
         hardwareBackend.init();
+        robot.init(hardwareBackend);
     }
 
     private void runRobotEvents() {
@@ -94,9 +94,5 @@ public class RobotContainer implements Runnable {
     void stop() {
         logger.info("Stopping robot container!");
         running = false;
-    }
-
-    protected HardwareBackend getHardwareBackend() {
-        return hardwareBackend;
     }
 }
