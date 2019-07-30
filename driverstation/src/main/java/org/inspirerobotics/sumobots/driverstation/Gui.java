@@ -10,6 +10,7 @@ import org.inspirerobotics.sumobots.Version;
 import org.inspirerobotics.sumobots.driverstation.gui.RootPane;
 import org.inspirerobotics.sumobots.driverstation.gui.StagePositionManager;
 import org.inspirerobotics.sumobots.driverstation.state.DriverstationState;
+import org.inspirerobotics.sumobots.driverstation.util.DriverstationLogAppender;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -25,6 +26,8 @@ public class Gui extends Application implements Thread.UncaughtExceptionHandler 
 
     @Override
     public void init() {
+        DriverstationLogAppender.init(this);
+
         backendWorker = new BackendWorker(this);
         createBackendWorkerThread();
     }
@@ -117,7 +120,12 @@ public class Gui extends Application implements Thread.UncaughtExceptionHandler 
     }
 
     public void log(String text){
-        getRootPane().getLogPane().appendLog(text);
+        Platform.runLater(() -> {
+            if(getRootPane() != null){
+                if(getRootPane().getLogPane() != null)
+                    getRootPane().getLogPane().appendLog(text);
+            }
+        });
     }
 
     public void clearLog() {

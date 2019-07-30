@@ -24,7 +24,7 @@ public class SocketPipeTests {
     @Test
     void checkVersionsMatchTest() throws IOException{
         String packet = "{\"path\":{\"source\":\"FIELD_SERVER\",\"destination\":\"DRIVER_STATION\"}," +
-                "\"data\":{\"version\":\"0.1.0\"},\"action\":\"version\"}";
+                "\"data\":{\"version\":\"0.1.1\"},\"action\":\"version\"}";
         PacketPath path = new PacketPath(FmsComponent.FIELD_SERVER, FmsComponent.DRIVER_STATION);
         SocketChannel channel = SocketChannel.open();
         SocketPipe pipe = new SocketPipe(channel, createPipeListener(), path);

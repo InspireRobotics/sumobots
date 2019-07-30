@@ -8,7 +8,7 @@ import org.inspirerobotics.sumobots.robot.api.RobotBase;
 import org.inspirerobotics.sumobots.robot.driverstation.Driverstation;
 import org.inspirerobotics.sumobots.robot.driverstation.DriverstationServer;
 import org.inspirerobotics.sumobots.robot.util.ExceptionHandlers;
-import org.inspirerobotics.sumobots.robot.util.RobotLog;
+import org.inspirerobotics.sumobots.robot.util.RobotLogAppender;
 
 public class RobotManager {
 
@@ -87,7 +87,7 @@ public class RobotManager {
     }
 
     public static void manage(RobotBase robot, HardwareBackend backend){
-        RobotLog.init();
+        RobotLogAppender.init();
         Version.printInfo("Robot Manager");
         Thread.currentThread().setUncaughtExceptionHandler(ExceptionHandlers.nonRobotHandler());
 

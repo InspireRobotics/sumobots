@@ -1,4 +1,4 @@
-package org.inspirerobotics.sumobots.robot.util;
+package org.inspirerobotics.sumobots.driverstation.util;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -9,12 +9,16 @@ import org.apache.logging.log4j.core.appender.AbstractAppender;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.inspirerobotics.sumobots.HighPriorityLogFilter;
 import org.inspirerobotics.sumobots.VisibleForTesting;
-import org.inspirerobotics.sumobots.robot.driverstation.Driverstation;
+import org.inspirerobotics.sumobots.driverstation.Gui;
 
-public class RobotLogAppender extends AbstractAppender{
+public class DriverstationLogAppender extends AbstractAppender {
 
-    public RobotLogAppender() {
+    private final Gui gui;
+
+    public DriverstationLogAppender(Gui gui) {
         super(LogManager.ROOT_LOGGER_NAME, new HighPriorityLogFilter(), null);
+
+        this.gui = gui;
     }
 
     @Override
@@ -22,16 +26,18 @@ public class RobotLogAppender extends AbstractAppender{
         String message = event.getMessage().getFormattedMessage();
         Level level = event.getLevel();
 
-        if(level.equals(Level.INFO)){
-            Driverstation.reportInfo(message);
-        }else if(level.equals(Level.WARN)){
-            Driverstation.reportWarning(message);
-        }else if(level.equals(Level.ERROR) || level.equals(Level.FATAL)){
-            Driverstation.reportError(message);
+        if(level.equals(Level.WARN)) {
+            gui.log("[DS][WARN] " + message);
+        } else if(level.equals(Level.ERROR) || level.equals(Level.FATAL)) {
+            gui.log("[DS][ERROR] " + message);
         }
     }
 
     @VisibleForTesting
+    public static void init(Gui gui) {
+        init(new DriverstationLogAppender(gui));
+    }
+
     public static void init(Appender appender){
         final LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
         final Configuration config = ctx.getConfiguration();
@@ -39,9 +45,5 @@ public class RobotLogAppender extends AbstractAppender{
         appender.start();
         config.addAppender(appender);
         ctx.getRootLogger().addAppender(appender);
-    }
-
-    public static void init(){
-        init(new RobotLogAppender());
     }
 }

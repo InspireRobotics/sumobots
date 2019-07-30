@@ -1,4 +1,4 @@
-package org.inspirerobotics.sumobots.robot.util;
+package org.inspirerobotics.sumobots;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Marker;
@@ -6,7 +6,7 @@ import org.apache.logging.log4j.core.Logger;
 import org.apache.logging.log4j.core.filter.AbstractFilter;
 import org.apache.logging.log4j.message.Message;
 
-public class RobotLogFilter extends AbstractFilter {
+public class HighPriorityLogFilter extends AbstractFilter {
 
     @Override
     public Result filter(final Logger logger, final Level level, final Marker marker, final Message msg,
