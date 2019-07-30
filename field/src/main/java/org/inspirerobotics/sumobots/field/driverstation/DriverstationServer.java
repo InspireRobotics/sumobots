@@ -32,7 +32,7 @@ public class DriverstationServer implements Closeable {
     public Optional<SocketChannel> acceptNext(){
         Optional<SocketChannel> output = Optional.empty();
 
-        if(socket.isOpen() == false){
+        if(!socket.isOpen()){
             throw new SumobotsRuntimeException("Server cannot accept while closed!");
         }
 

@@ -9,17 +9,20 @@ import org.inspirerobotics.sumobots.driverstation.util.BackendEvent;
 import org.inspirerobotics.sumobots.driverstation.util.BackendEventQueue;
 
 import java.util.Optional;
-import java.util.function.Supplier;
 
 public class BackendWorker implements Runnable{
 
     private static final Logger logger = LogManager.getLogger(BackendWorker.class);
+    private static final int CONNECTION_RESET_TIME = 5000;
 
     private final DriverstationStateManager stateManager;
     private final Gui gui;
 
     private Optional<Connection> fieldConnection = Optional.empty();
     private Optional<Connection> robotConnection = Optional.empty();
+    private int robotConnectionTimeout = 0;
+    private int fieldConnectionTimeout = 0;
+
     private volatile boolean running;
 
     public BackendWorker(Gui gui) {
@@ -43,8 +46,8 @@ public class BackendWorker implements Runnable{
         while (running){
             runEventsFromEventQueue();
 
-            setFieldConnection(updateConnection(fieldConnection, () -> Connection.createForField()));
-            setRobotConnection(updateConnection(robotConnection, () -> Connection.createForRobot(gui)));
+            updateFieldConnection();
+            updateRobotConnection();
         }
     }
 
@@ -56,16 +59,33 @@ public class BackendWorker implements Runnable{
         }
     }
 
-    private Optional<Connection> updateConnection(Optional<Connection> connection, Supplier<Optional<Connection>> creator){
-        if(connection.isPresent()){
-            if(connection.get().isClosed())
-                return Optional.empty();
-
-            connection.get().update();
-
-            return connection.filter(c -> !c.isClosed());
+    private void updateFieldConnection(){
+        if(fieldConnection.isPresent()){
+            if(fieldConnection.get().isClosed()){
+                fieldConnectionTimeout = CONNECTION_RESET_TIME;
+                setFieldConnection(Optional.empty());
+            }else{
+                fieldConnection.get().update();
+            }
+        }else if(fieldConnectionTimeout >= 0){
+            fieldConnectionTimeout--;
         }else{
-            return creator.get();
+            setFieldConnection(Connection.createForField());
+        }
+    }
+
+    private void updateRobotConnection(){
+        if(robotConnection.isPresent()){
+            if(robotConnection.get().isClosed()){
+                robotConnectionTimeout = CONNECTION_RESET_TIME;
+                setRobotConnection(Optional.empty());
+            }else{
+                robotConnection.get().update();
+            }
+        }else if(robotConnectionTimeout >= 0){
+            robotConnectionTimeout--;
+        }else{
+            setRobotConnection(Connection.createForRobot(gui));
         }
     }
 

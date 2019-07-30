@@ -28,7 +28,7 @@ public class RootPane extends AnchorPane {
 
         this.getChildren().add(borderPane);
 
-        StyleManager.getInstance().styleChildren(StyleType.LIGHT);
+        StyleManager.getInstance().styleChildren(StyleType.DARK);
     }
 
     public Scene createScene() {
