@@ -1,10 +1,6 @@
 # Sumobots
-This repository has all of the code for the Sumobots Control System. 
-This repo contains the (in progress) rewrite of the original version. 
-
-## What is Sumobots?
-Sumobots is a project started by FRC team 4283, INSPIRE Robotics, and FTC team 10489 Missing Parts. 
-The goal of the project is to expand the FRC and FTC seasons and promote STEM in central Ohio. 
+This repository contains code for a prototype control system for sumobots. 
+Sumobots use a raspberry pi to control motors, servos, etc. The entire project is written in java. 
 
 ## Documentation
 Documentation (like most of this project) is a WIP. 

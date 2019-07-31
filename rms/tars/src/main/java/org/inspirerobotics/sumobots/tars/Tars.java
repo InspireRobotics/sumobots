@@ -13,22 +13,21 @@ public class Tars {
 
     private final String[] args;
     private final String filePath;
+    private final String robotIP;
 
     public Tars(String[] args) {
         this.args = args;
 
-        this.filePath = getPathFromArgs();
-    }
-    private String getPathFromArgs() {
-        if(args.length != 1){
-            throw new SumobotsRuntimeException("Expected one argument, found " + args.length + "!");
+        if(args.length != 2){
+            throw new SumobotsRuntimeException("Expected two arguments, found " + args.length + "!");
         }
 
-        return args[0];
+        this.filePath = args[0];
+        this.robotIP = args[1];
     }
 
     private void run() {
-        RobotServerConnection connection = new RobotServerConnection();
+        RobotServerConnection connection = new RobotServerConnection(robotIP);
         InputStream fileStream = getFileStream();
 
         FileTransferManager fileTransferManager = new FileTransferManager(connection.getOutputStream(), fileStream);

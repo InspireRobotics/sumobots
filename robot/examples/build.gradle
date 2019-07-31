@@ -4,6 +4,7 @@ plugins {
 
 group 'org.inspirerobotics'
 version '0.1.0'
+def robotIP = "localhost"
 
 sourceCompatibility = 1.8
 
@@ -30,10 +31,7 @@ jar {
     from {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
-}
-
-task robotDeploy(type: Exec){
-    commandLine("$projectDir/robotDeploy.bat", "$projectDir\\build\\libs\\examples-${version}.jar")
+    archiveName = "robot-code.jar"
 }
 
 test {

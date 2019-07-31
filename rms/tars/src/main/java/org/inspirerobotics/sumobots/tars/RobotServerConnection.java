@@ -11,13 +11,13 @@ public class RobotServerConnection {
 
     private final Socket connection;
 
-    public RobotServerConnection() {
-        this.connection = getConnection();
+    public RobotServerConnection(String ip) {
+        this.connection = getConnection(ip);
     }
 
-    private Socket getConnection() {
+    private Socket getConnection(String ip) {
         try{
-            return new Socket("localhost", Ports.ROBOT_FTP);
+            return new Socket(ip, Ports.ROBOT_FTP);
         }catch(IOException e){
             throw new SumobotsRuntimeException("Failed to connect to RMS! ", e);
         }

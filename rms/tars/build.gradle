@@ -6,14 +6,15 @@ plugins {
 mainClassName = "org.inspirerobotics.sumobots.tars.Tars"
 sourceCompatibility = 1.8
 
+def robotIP = "192.168.6.1"
+def robotJar = "${projectDir}/../../robot/examples/build/libs/robot-code.jar"
+
 repositories {
     mavenCentral()
 }
 
 run {
-    if (project.hasProperty('robotPath')) {
-        args findProperty('robotPath')
-    }
+    args(robotJar, robotIP)
 }
 
 dependencies {

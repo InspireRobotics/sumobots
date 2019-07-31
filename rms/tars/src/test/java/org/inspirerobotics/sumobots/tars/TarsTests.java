@@ -7,22 +7,22 @@ import org.junit.jupiter.api.Test;
 public class TarsTests {
 
     @Test
-    void moreThanOneArgumentFailsTest() {
+    void moreThanTwoArgumentFailsTest() {
         Assertions.assertThrows(SumobotsRuntimeException.class, () -> {
-           new Tars(new String[2]);
+           new Tars(new String[3]);
         });
     }
 
     @Test
-    void zeroArgumentsFailsTest() {
+    void oneArgumentsFailsTest() {
         Assertions.assertThrows(SumobotsRuntimeException.class, () -> {
-            new Tars(new String[0]);
+            new Tars(new String[]{""});
         });
     }
 
     @Test
     void getPathTest() {
-        Tars tars = new Tars(new String[]{"Zebra"});
+        Tars tars = new Tars(new String[]{"Zebra", ""});
 
         Assertions.assertEquals("Zebra", tars.getFilePath());
     }
