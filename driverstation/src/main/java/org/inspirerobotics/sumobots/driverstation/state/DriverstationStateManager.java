@@ -62,6 +62,11 @@ public class DriverstationStateManager {
     }
 
     public void attemptToEnable() {
+        if(!getCurrentState().isRobotConnected()){
+            logger.warn("Robot must be connected for it to be enabled!");
+            return;
+        }
+
         attemptToChangeComponentState(ComponentState.ENABLED);
     }
 

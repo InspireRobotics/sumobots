@@ -46,7 +46,6 @@ public class DriverstationManagerTests extends JavaFXTest {
     @Test
     void attemptToDisableBasicTest() {
         manager.setCurrentState(new DriverstationState(DriverstationMode.REGULAR, ComponentState.ENABLED));
-        Assertions.assertEquals(manager.getCurrentState().getCurrentState(), ComponentState.ENABLED);
 
         manager.attemptToDisable();
         Assertions.assertEquals(manager.getCurrentState().getCurrentState(), ComponentState.DISABLED);
@@ -54,10 +53,20 @@ public class DriverstationManagerTests extends JavaFXTest {
 
     @Test
     void attemptToEnableBasicTest() {
-        Assertions.assertEquals(manager.getCurrentState().getCurrentState(), ComponentState.DISABLED);
+        manager.getCurrentState().setRobotConnected(true);
 
         manager.attemptToEnable();
+
         Assertions.assertEquals(manager.getCurrentState().getCurrentState(), ComponentState.ENABLED);
+    }
+
+    @Test
+    void attemptToEnableFailsIfNoRobotTest() {
+        manager.getCurrentState().setRobotConnected(false);
+
+        manager.attemptToEnable();
+
+        Assertions.assertEquals(manager.getCurrentState().getCurrentState(), ComponentState.DISABLED);
     }
 }
 class TestStateManager extends DriverstationStateManager{
