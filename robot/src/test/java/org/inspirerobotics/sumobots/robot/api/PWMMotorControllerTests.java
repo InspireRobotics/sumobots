@@ -7,17 +7,17 @@ public class PWMMotorControllerTests {
 
     @Test
     void percentToValueNegativeOneTest() {
-        percentToValueTest(100, -1);
+        percentToValueTest(10, -1);
     }
 
     @Test
     void percentToValuePositiveOneTest() {
-        percentToValueTest(200, 1);
+        percentToValueTest(20, 1);
     }
 
     @Test
     void percentToValueZeroTest() {
-        percentToValueTest(150, 0);
+        percentToValueTest(15, 0);
     }
 
     void percentToValueTest(int expected, double percent){

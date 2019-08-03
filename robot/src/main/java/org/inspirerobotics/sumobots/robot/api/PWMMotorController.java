@@ -24,9 +24,8 @@ public class PWMMotorController {
      */
     static int percentToValue(double percentPower) {
         percentPower /= 2;
-        percentPower += .5;
-        percentPower *= 100;
-        percentPower += 100;
+        percentPower += 1.5;
+        percentPower *= 10;
 
         return (int) percentPower;
     }
