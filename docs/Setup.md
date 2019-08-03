@@ -24,7 +24,7 @@ so you will need to clone the repository from Github and build the RMS fat jar.
 
 (MORE DETAILS COMING SOON)
 
-#### Step 4: Set the RMS To Run on Boot
+### Step 4: Set the RMS To Run on Boot
 The fourth step is to set the RMS to run on boot. 
 This will cause Raspbian to automatically start the code once the Pi is turned on.
 
@@ -40,7 +40,29 @@ Then add this line to the bottom:
 @lxterminal -e java -jar /home/pi/Desktop/rms.jar
 ```
 
-#### Step 5: Set Raspberry Pi's Static IP
-(MORE DETAILS COMING SOON)
+### Step 5: Set Raspberry Pi's Static IP
 
-#### [Unconfirmed Tutorial](https://nebulousthinking.wordpress.com/2016/02/25/setting-a-static-ip-for-raspbian-jessie-in-2016//)
+Run the following command to open the network configuration file:
+```
+sudo nano /etc/dhcpcd.conf
+```
+
+At the end of the file add the following lines:
+```
+interface wlan0
+static ip_address=ROBOT IP
+static routers=ROUTER IP
+static domain_name_servers=8.8.8.8 ROUTER IP 8.8.4.4
+```
+
+For instance: 
+```
+interface wlan0
+static ip_address=192.168.5.123
+static routers=192.168.5.1
+static domain_name_servers=8.8.8.8 192.168.5.1 8.8.4.4
+```
+
+### Step 6: Deploy Robot Code
+Once this is complete, you are ready to write robot code. For more details see
+ [/Deploy.md](/https://github.com/InspireRobotics/sumobots/tree/master/docs/Deploy.md)
