@@ -7,6 +7,7 @@ import javafx.stage.Stage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.inspirerobotics.sumobots.Version;
+import org.inspirerobotics.sumobots.driverstation.config.Config;
 import org.inspirerobotics.sumobots.driverstation.gui.RootPane;
 import org.inspirerobotics.sumobots.driverstation.gui.StagePositionManager;
 import org.inspirerobotics.sumobots.driverstation.state.DriverstationState;
@@ -109,6 +110,8 @@ public class Gui extends Application implements Thread.UncaughtExceptionHandler 
 
     public static void main(String[] args) {
         Version.printInfo("Driverstation");
+        Config.init(args);
+
         launch(args);
     }
 

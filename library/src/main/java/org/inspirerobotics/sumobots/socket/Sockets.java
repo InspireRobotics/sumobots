@@ -13,7 +13,7 @@ public class Sockets {
 
     private static final Logger logger = LogManager.getLogger(Sockets.class);
 
-    public static Optional<SocketChannel> create(int port, int timeout){
+    public static Optional<SocketChannel> create(String ip, int port, int timeout){
         try{
             SocketChannel socket = SocketChannel.open();
             socket.socket().connect(new InetSocketAddress(port), timeout);
@@ -27,5 +27,9 @@ public class Sockets {
         }
 
         return Optional.empty();
+    }
+
+    public static Optional<SocketChannel> create(int port, int timeout){
+       return create("localhost", port, timeout);
     }
 }
