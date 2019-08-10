@@ -68,6 +68,22 @@ public class DriverstationManagerTests extends JavaFXTest {
 
         Assertions.assertEquals(manager.getCurrentState().getCurrentState(), ComponentState.DISABLED);
     }
+
+    @Test
+    void setJoystickStatusSyncsWithGuiTest() {
+        manager.setJoystickStatus(true);
+
+        Assertions.assertTrue(manager.getGuiState().isJoysticksConnected());
+    }
+
+    @Test
+    void joystickStatusCopiedOnStateChange() {
+        manager.setJoystickStatus(true);
+
+        manager.attemptToChangeComponentState(ComponentState.DISABLED);
+
+        Assertions.assertTrue(manager.getCurrentState().isJoysticksConnected());
+    }
 }
 class TestStateManager extends DriverstationStateManager{
 
@@ -84,12 +100,5 @@ class TestStateManager extends DriverstationStateManager{
 
     public DriverstationState getGuiState() {
         return guiState;
-    }
-
-    @Override
-    public void attemptToChangeComponentState(ComponentState componentState) {
-        DriverstationState newState = new DriverstationState(this.getCurrentState().getMode(), componentState);
-
-        setCurrentState(newState);
     }
 }

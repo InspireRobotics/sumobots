@@ -100,6 +100,10 @@ public class BackendWorker implements Runnable{
         running = false;
     }
 
+    public void setJoystickStatus(boolean connected){
+        this.stateManager.setJoystickStatus(connected);
+    }
+
     void setFieldConnection(Optional<Connection> fieldConnection) {
         if(fieldConnection != this.fieldConnection){
             this.fieldConnection = fieldConnection;

@@ -74,8 +74,14 @@ public class DriverstationStateManager {
         DriverstationState newState = new DriverstationState(this.currentState.getMode(), componentState);
         newState.setFieldConnected(backend.getFieldConnection().isPresent());
         newState.setRobotConnected(backend.getRobotConnection().isPresent());
+        newState.setJoysticksConnected(currentState.isJoysticksConnected());
 
         setCurrentState(newState);
+    }
+
+    public void setJoystickStatus(boolean connected) {
+        currentState.setJoysticksConnected(connected);
+        syncStateWithGui();
     }
 
     public DriverstationState getCurrentState() {

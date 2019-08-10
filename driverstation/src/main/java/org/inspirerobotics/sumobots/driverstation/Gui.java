@@ -10,6 +10,7 @@ import org.inspirerobotics.sumobots.Version;
 import org.inspirerobotics.sumobots.driverstation.config.Config;
 import org.inspirerobotics.sumobots.driverstation.gui.RootPane;
 import org.inspirerobotics.sumobots.driverstation.gui.StagePositionManager;
+import org.inspirerobotics.sumobots.driverstation.joystick.JoystickThread;
 import org.inspirerobotics.sumobots.driverstation.state.DriverstationState;
 import org.inspirerobotics.sumobots.driverstation.util.DriverstationLogAppender;
 
@@ -31,6 +32,15 @@ public class Gui extends Application implements Thread.UncaughtExceptionHandler 
 
         backendWorker = new BackendWorker(this);
         createBackendWorkerThread();
+        createJoystickThread();
+    }
+
+    private void createJoystickThread() {
+        Thread thread = new Thread(new JoystickThread());
+        thread.setName("Joystick Thread");
+        thread.setDaemon(true);
+        thread.setUncaughtExceptionHandler(this);
+        thread.start();
     }
 
     private void createBackendWorkerThread() {
@@ -75,7 +85,7 @@ public class Gui extends Application implements Thread.UncaughtExceptionHandler 
     @Override
     public void uncaughtException(Thread t, Throwable e) {
         String stacktrace = uncaughtExceptionToString(e);
-        logger.fatal("Uncaught Exception has occurred on backend thread `{}`: {}", t.getName(), stacktrace);
+        logger.fatal("Uncaught Exception has occurred on thread `{}`: {}", t.getName(), stacktrace);
         shutdownAndTerminate(1);
     }
 
@@ -91,6 +101,8 @@ public class Gui extends Application implements Thread.UncaughtExceptionHandler 
 
         Platform.exit();
         stopBackendThread();
+
+        logger.fatal("Exiting JVM with status: " + status);
         System.exit(status);
     }
 
