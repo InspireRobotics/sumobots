@@ -1,6 +1,7 @@
 package org.inspirerobotics.sumobots.robot;
 
 import org.inspirerobotics.sumobots.ComponentState;
+import org.inspirerobotics.sumobots.packet.JoystickData;
 import org.inspirerobotics.sumobots.robot.api.HardwareBackend;
 import org.inspirerobotics.sumobots.robot.api.MockHardware;
 import org.inspirerobotics.sumobots.robot.api.RobotBase;
@@ -89,7 +90,7 @@ class TestRobot implements RobotBase{
     }
 
     @Override
-    public void enablePeriodic() {
+    public void enablePeriodic(JoystickData data) {
         enableCount++;
     }
 

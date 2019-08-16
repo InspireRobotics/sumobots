@@ -2,6 +2,7 @@ package org.inspirerobotics.sumobots.robot.examples;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.inspirerobotics.sumobots.packet.JoystickData;
 import org.inspirerobotics.sumobots.robot.api.HardwareBackend;
 import org.inspirerobotics.sumobots.robot.api.PWMMotorController;
 import org.inspirerobotics.sumobots.robot.api.RobotBase;
@@ -36,7 +37,7 @@ public class BasicRobot implements RobotBase {
     }
 
     @Override
-    public void enablePeriodic() {
-
+    public void enablePeriodic(JoystickData data) {
+        logger.info("Data: " + data.getLeftX());
     }
 }

@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.inspirerobotics.sumobots.ComponentState;
 import org.inspirerobotics.sumobots.VisibleForTesting;
+import org.inspirerobotics.sumobots.packet.JoystickData;
 import org.inspirerobotics.sumobots.robot.api.HardwareBackend;
 import org.inspirerobotics.sumobots.robot.api.RobotBase;
 import org.inspirerobotics.sumobots.robot.driverstation.Driverstation;
@@ -17,6 +18,7 @@ public class RobotContainer implements Runnable {
     private static final Logger logger = LogManager.getLogger(RobotContainer.class);
     private final RobotBase robot;
     private final HardwareBackend hardwareBackend;
+    protected JoystickData joystickData = new JoystickData(0f, 0f, 0f, 0f);
 
     private volatile boolean running;
 
@@ -69,6 +71,10 @@ public class RobotContainer implements Runnable {
         }
     }
 
+    public void setJoystick(JoystickData data) {
+        this.joystickData = data;
+    }
+
     @VisibleForTesting
     void updateRobot() {
         switch (Driverstation.getInstance().getState()) {
@@ -76,7 +82,7 @@ public class RobotContainer implements Runnable {
                 robot.disablePeriodic();
                 break;
             case ENABLED:
-                robot.enablePeriodic();
+                robot.enablePeriodic(joystickData);
                 break;
             default:
                 throw new IllegalStateException("Unknown variant: " + Driverstation.getInstance().getState());

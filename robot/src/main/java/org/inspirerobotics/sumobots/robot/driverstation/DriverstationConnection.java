@@ -4,10 +4,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.inspirerobotics.sumobots.FmsComponent;
 import org.inspirerobotics.sumobots.VisibleForTesting;
-import org.inspirerobotics.sumobots.packet.Packet;
-import org.inspirerobotics.sumobots.packet.PacketFactory;
-import org.inspirerobotics.sumobots.packet.PacketPath;
-import org.inspirerobotics.sumobots.packet.UpdateStateData;
+import org.inspirerobotics.sumobots.packet.*;
+import org.inspirerobotics.sumobots.robot.event.RobotEventQueue;
 import org.inspirerobotics.sumobots.socket.SocketPipe;
 import org.inspirerobotics.sumobots.socket.SocketPipeListener;
 
@@ -35,6 +33,16 @@ public class DriverstationConnection implements SocketPipeListener {
         if(packet.getAction().equals(PacketFactory.UPDATE)){
             handleUpdateMessage(packet);
         }
+
+        if(packet.getAction().equals(PacketFactory.JOYSTICK)){
+            handleJoystick(packet);
+        }
+    }
+
+    private void handleJoystick(Packet packet) {
+        JoystickData data = (JoystickData) packet.getDataAs(JoystickData.class).get();
+
+        RobotEventQueue.add(robot -> robot.setJoystick(data));
     }
 
     private void handleUpdateMessage(Packet packet) {

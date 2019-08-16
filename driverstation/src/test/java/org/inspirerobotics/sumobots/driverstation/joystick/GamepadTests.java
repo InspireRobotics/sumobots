@@ -3,6 +3,7 @@ package org.inspirerobotics.sumobots.driverstation.joystick;
 import net.java.games.input.AbstractComponent;
 import net.java.games.input.Component;
 import net.java.games.input.Event;
+import org.inspirerobotics.sumobots.packet.JoystickData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -11,7 +12,18 @@ public class GamepadTests {
     private final Gamepad gamepad = new Gamepad(null);
 
     @Test
-    void leftYAxisTest() {
+    void joystickDataTest() {
+        gamepad.handleEvent(createEvent("x", .15f));
+        gamepad.handleEvent(createEvent("y", .25f));
+        gamepad.handleEvent(createEvent("rx", .35f));
+        gamepad.handleEvent(createEvent("ry", .45f));
+
+        JoystickData expected = new JoystickData(.15f, .25f, .35f, .45f);
+        Assertions.assertEquals(expected, gamepad.getData());
+    }
+
+    @Test
+    void leftYAxisEventTest() {
         Event event = createEvent("y", .124f);
 
         gamepad.handleEvent(event);
@@ -20,7 +32,7 @@ public class GamepadTests {
     }
 
     @Test
-    void leftXAxisTest() {
+    void leftXAxisEventTest() {
         Event event = createEvent("x", .521f);
 
         gamepad.handleEvent(event);
@@ -29,7 +41,7 @@ public class GamepadTests {
     }
 
     @Test
-    void rightYAxisTest() {
+    void rightYAxisEventTest() {
         Event event = createEvent("ry", -.411f);
 
         gamepad.handleEvent(event);
@@ -38,7 +50,7 @@ public class GamepadTests {
     }
 
     @Test
-    void rightXAxisTest() {
+    void rightXAxisEventTest() {
         Event event = createEvent("rx", .888f);
 
         gamepad.handleEvent(event);

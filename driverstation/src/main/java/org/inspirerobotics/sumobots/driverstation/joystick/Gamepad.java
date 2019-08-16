@@ -4,6 +4,7 @@ import net.java.games.input.Controller;
 import net.java.games.input.Event;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.inspirerobotics.sumobots.packet.JoystickData;
 
 public class Gamepad {
 
@@ -16,10 +17,10 @@ public class Gamepad {
 
     private final Controller controller;
 
-    private double leftX;
-    private double leftY;
-    private double rightX;
-    private double rightY;
+    private float leftX;
+    private float leftY;
+    private float rightX;
+    private float rightY;
 
     public Gamepad(Controller controller) {
         this.controller = controller;
@@ -62,6 +63,10 @@ public class Gamepad {
             default:
                 logger.trace("Unknown identifier: " + event.getComponent().getIdentifier().getName());
         }
+    }
+
+    public JoystickData getData(){
+        return new JoystickData(leftX, leftY, rightX, rightY);
     }
 
     public synchronized double getLeftX() {

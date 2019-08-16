@@ -11,6 +11,7 @@ public class PacketFactory {
     public static final String CLOSE = "close";
     public static final String UPDATE = "update";
     public static final String LOG = "log";
+    public static final String JOYSTICK = "joystick";
 
     public static Packet createHeartbeat(PacketPath path){
         return Packet.create(HEARTBEAT, path, Optional.of(new HeartbeatData()));
@@ -30,5 +31,9 @@ public class PacketFactory {
 
     public static Packet createLog(PacketPath path, String message) {
         return Packet.create(LOG, path, Optional.of(new LogData(message)));
+    }
+
+    public static Packet createJoystick(PacketPath path, JoystickData data){
+        return Packet.create(JOYSTICK, path, Optional.of(data));
     }
 }
