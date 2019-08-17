@@ -16,7 +16,7 @@ public class Sockets {
     public static Optional<SocketChannel> create(String ip, int port, int timeout){
         try{
             SocketChannel socket = SocketChannel.open();
-            socket.socket().connect(new InetSocketAddress(port), timeout);
+            socket.socket().connect(new InetSocketAddress(ip, port), timeout);
 
             if(socket.socket().isConnected())
                 return Optional.of(socket);
